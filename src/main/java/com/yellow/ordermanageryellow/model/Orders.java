@@ -1,14 +1,12 @@
 package com.yellow.ordermanageryellow.model;
+
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.util.List;
-
-@Document(collection = "Orders")
-
+@Collation
 public class Orders {
     private String id_test2;
     private Users employee;
@@ -25,7 +23,4 @@ public class Orders {
     @DBRef
     private AuditData auditData;
 
-    public Orders(String id) {
-        this.id = id;
-    }
 }
