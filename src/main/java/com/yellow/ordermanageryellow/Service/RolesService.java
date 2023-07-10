@@ -8,15 +8,7 @@ package com.yellow.ordermanageryellow.Service;
         import org.springframework.stereotype.Service;
 
 @Service
-public class RolesService implements CommandLineRunner {
-    private final RolesRepository RolesRepository;
-    @Autowired
-    public RolesService(RolesRepository RolesRepository) {
-        this.RolesRepository = RolesRepository;
-    }
-    @Override
-    public void run(String... args) {
-        Roles Roles = new Roles("12");
-        RolesRepository.save(Roles);
-    }
+public class RolesService {
+    private RolesRepository RolesRepository;
+
 }

@@ -7,15 +7,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ProductCategoryService implements CommandLineRunner {
-    private final ProductCategoryRepository ProductCategoryRepository;
-    @Autowired
-    public ProductCategoryService(ProductCategoryRepository ProductCategoryRepository) {
-        this.ProductCategoryRepository = ProductCategoryRepository;
-    }
-    @Override
-    public void run(String... args) {
-        ProductCategory ProductCategory = new ProductCategory("12");
-        ProductCategoryRepository.save(ProductCategory);
-    }
+public class ProductCategoryService {
+    private ProductCategoryRepository ProductCategoryRepository;
 }

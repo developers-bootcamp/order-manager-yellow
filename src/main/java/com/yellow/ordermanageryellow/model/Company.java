@@ -17,13 +17,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Company")
 public class Company {
 
-    public Company(String id){
-        this.id=id;
-    }
+
     @Id
     private String id;
     private String name;
     private String currency;
-    @DBRef
     private AuditData auditData;
 }

@@ -9,15 +9,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class OrdersService implements CommandLineRunner {
-    private final OrdersRepository OrdersRepository;
-    @Autowired
-    public OrdersService(OrdersRepository OrdersRepository) {
-        this.OrdersRepository = OrdersRepository;
-    }
-    @Override
-    public void run(String... args) {
-        Orders Orders = new Orders("12");
-        OrdersRepository.save(Orders);
-    }
+public class OrdersService  {
+    private  OrdersRepository OrdersRepository;
+
 }

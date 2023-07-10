@@ -17,20 +17,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Users")
 
 public class Users {
-    public Users(String id){
-        this.id =id;
-    }
-    @Id
-private String id;
-private String fullName;
-private String password;
-@DBRef
-private Address address;
 
-private Roles roleId;
-private Company companyId;
+    @Id
+    private String id;
+    private String fullName;
+    private String password;
+    private Address address;
     @DBRef
-private AuditData AuditData;
+    private Roles roleId;
+    @DBRef
+    private Company companyId;
+    private AuditData AuditData;
 
 
 }
