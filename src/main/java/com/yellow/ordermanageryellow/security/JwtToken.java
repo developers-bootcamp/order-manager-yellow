@@ -4,10 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.yellow.ordermanageryellow.model.Users;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-enum EncryptedData {ROLE, ID, COMPANY};
+;
+@Component
 public class JwtToken {
     private static final String JWT_TOKEN_SECRET = "mySecret";
     private static final long JWT_TOKEN_EXPIRATION = 604800000L; // 7 days

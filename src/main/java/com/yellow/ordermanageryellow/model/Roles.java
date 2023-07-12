@@ -5,7 +5,7 @@ import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-enum RoleNames{ADMIN, EMPLOYEE, CUSTOMER};
+;
 @Data
 @Collation
 @Document(collection = "Roles")

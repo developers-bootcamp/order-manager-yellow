@@ -1,5 +1,6 @@
 package com.yellow.ordermanageryellow.controller;
 
+import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.service.ProductCategoryService;
 import com.yellow.ordermanageryellow.model.ProductCategory;
@@ -48,9 +49,9 @@ public class ProductCategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity deleteCategory(@PathVariable String categoryId) {
+    public ResponseEntity deleteCategory(@RequestHeader("Authorization") String token, @PathVariable String categoryId) {
         try {
-            productCategoryService.delete(categoryId);
+            productCategoryService.delete(token, categoryId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (EmptyResultDataAccessException ex) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
