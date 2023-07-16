@@ -27,6 +27,7 @@ public class UsersService {
 
     @Value("${pageSize}")
     private int pageSize;
+
     @Autowired
     public UsersService(UserRepository UserRepository, UserMapper userMapper) {
         this.UserRepository = UserRepository;
@@ -55,12 +56,14 @@ public class UsersService {
     }
 
     public String generateToken(Users user) {
-        return user.getCompanyId()+"&" + user.getId()+"&" + user.getRoleId();
+        return user.getCompanyId() + "&" + user.getId() + "&" + user.getRoleId();
     }
-public String [] getToken(String token){
-        String[] tokenS=token.split("&");
+
+    public String[] getToken(String token) {
+        String[] tokenS = token.split("&");
         return tokenS;
-}
+    }
+
     public boolean findUser(Users user) {
 
         Users foundUser = UserRepository.findUserByEmail(user.getAddress().getEmail());

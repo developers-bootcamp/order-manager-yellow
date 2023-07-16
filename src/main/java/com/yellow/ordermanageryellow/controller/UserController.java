@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+
 
 @RestController
 @RequestMapping("/User")
@@ -79,7 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/{pageNumber}")
-    public ResponseEntity getAllUsers(@PathVariable int pageNumber,  @RequestHeader String token) {
+    public ResponseEntity getAllUsers(@PathVariable int pageNumber, @RequestHeader String token) {
         List<UserDTO> customers;
         try {
             customers = usersService.getUsers(pageNumber);
