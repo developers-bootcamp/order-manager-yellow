@@ -7,15 +7,15 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class CompanyService implements CommandLineRunner {
-    private final CompanyRepository CompanyRepository;
-    @Autowired
-    public CompanyService(CompanyRepository CompanyRepository) {
-        this.CompanyRepository = CompanyRepository;
-    }
-    @Override
-    public void run(String... args) {
-        Company Company = new Company("12");
-        CompanyRepository.save(Company);
-    }
+public class CompanyService{
+//    private final CompanyRepository CompanyRepository;
+//    @Autowired
+//    public CompanyService(CompanyRepository CompanyRepository) {
+//        this.CompanyRepository = CompanyRepository;
+//    }
+//    @Override
+//    public void run(String... args) {
+//        Company Company = new Company("12");
+//        CompanyRepository.save(Company);
+//    }
 }

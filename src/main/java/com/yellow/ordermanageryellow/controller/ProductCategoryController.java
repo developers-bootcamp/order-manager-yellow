@@ -49,26 +49,37 @@ public class ProductCategoryController {
     }
 
     @DeleteMapping("/{categoryId}")
-    public ResponseEntity deleteCategory(@RequestHeader("Authorization") String token, @PathVariable String categoryId) {
+    public ResponseEntity deleteCategory(@RequestHeader("Authorization") String token, @PathVariable String categoryId){
         try {
             productCategoryService.delete(token, categoryId);
             return new ResponseEntity(HttpStatus.OK);
         } catch (EmptyResultDataAccessException ex) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } catch (NoPermissionException ex) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
         } catch (Exception ex) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
+
     @PutMapping
-    public ResponseEntity<?> updateCategory(@RequestBody ProductCategory updatedCategory) {
+    public ResponseEntity<?> updateCategory(@RequestHeader("Authorization") String token,@RequestBody ProductCategory updatedCategory) {
         try {
-            ProductCategory updateItem = productCategoryService.update(updatedCategory);
+            ProductCategory updateItem = productCategoryService.update(token,updatedCategory);
             return ResponseEntity.ok(updateItem);
         } catch (NoSuchElementException ex) {
             return new ResponseEntity(null, HttpStatus.NOT_FOUND);
+        } catch (NoPermissionException ex) {
+            return new ResponseEntity(HttpStatus.FORBIDDEN);
         } catch (Exception ex) {
             return new ResponseEntity(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+    //This function has to be deleted, Just for trying the token
+    @GetMapping
+    @RequestMapping("/createToken")
+    public String createToken() {
+        return productCategoryService.fill();
     }
 }
