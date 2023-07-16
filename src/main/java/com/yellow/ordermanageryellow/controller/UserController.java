@@ -1,7 +1,7 @@
 package com.yellow.ordermanageryellow.controller;
 
-import com.yellow.ordermanageryellow.DTO.MapStructMapper;
 import com.yellow.ordermanageryellow.DTO.UserDTO;
+import com.yellow.ordermanageryellow.DTO.UserMapper;
 import com.yellow.ordermanageryellow.Service.UsersService;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
@@ -13,18 +13,20 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/User")
 public class UserController {
 
     private final UsersService usersService;
-    private final MapStructMapper mapStructMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserController(UsersService usersService, MapStructMapper mapStructMapper) {
+    public UserController(UsersService usersService, UserMapper userMapper) {
         this.usersService = usersService;
-        this.mapStructMapper = mapStructMapper;
+        this.userMapper = userMapper;
     }
 
     @GetMapping("/login")
@@ -64,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public ResponseEntity updateCustomer(@RequestBody Users user, @RequestHeader String token) {
+    public ResponseEntity updateUser(@RequestBody Users user, @RequestHeader String token) {
         try {
             usersService.updateUser(user);
         } catch (NotFoundException e) {
@@ -76,13 +78,13 @@ public class UserController {
 
     }
 
-    @GetMapping("/{pageNumber}/{pageSize}")
-    public ResponseEntity<List<UserDTO>> getAllCustomers(@PathVariable int pageNumber, @PathVariable int pageSize, @RequestHeader String token) {
+    @GetMapping("/{pageNumber}")
+    public ResponseEntity getAllUsers(@PathVariable int pageNumber,  @RequestHeader String token) {
         List<UserDTO> customers;
         try {
-            customers = usersService.getCustomers(pageNumber, pageSize);
+            customers = usersService.getUsers(pageNumber);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body(null);
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
         return ResponseEntity.status(HttpStatus.OK).body(customers);
     }

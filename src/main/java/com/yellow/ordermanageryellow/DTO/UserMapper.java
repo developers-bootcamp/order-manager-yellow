@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Mapper(componentModel = "spring")
-public interface MapStructMapper {
- MapStructMapper INSTANCE= Mappers.getMapper(MapStructMapper.class);
+public interface UserMapper {
+ UserMapper INSTANCE= Mappers.getMapper(UserMapper.class);
 
  @Mapping(source = "address.email", target = "email")
  @Mapping(source = "address.telephone", target = "telephone")

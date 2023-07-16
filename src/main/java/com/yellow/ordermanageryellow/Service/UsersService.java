@@ -1,7 +1,7 @@
 package com.yellow.ordermanageryellow.Service;
 
-import com.yellow.ordermanageryellow.DTO.MapStructMapper;
 import com.yellow.ordermanageryellow.DTO.UserDTO;
+import com.yellow.ordermanageryellow.DTO.UserMapper;
 import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
@@ -9,6 +9,7 @@ import com.yellow.ordermanageryellow.exception.WrongPasswordException;
 import com.yellow.ordermanageryellow.model.Users;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,21 +21,18 @@ import java.util.List;
 
 
 @Service
-public class UsersService implements CommandLineRunner {
+public class UsersService {
     private final UserRepository UserRepository;
-    private final MapStructMapper mapStructMapper;
+    private final UserMapper userMapper;
 
+    @Value("${pageSize}")
+    private int pageSize;
     @Autowired
-    public UsersService(UserRepository UserRepository, MapStructMapper mapStructMapper) {
+    public UsersService(UserRepository UserRepository, UserMapper userMapper) {
         this.UserRepository = UserRepository;
-        this.mapStructMapper = mapStructMapper;
+        this.userMapper = userMapper;
     }
 
-    @Override
-    public void run(String... args) {
-        Users myModel = new Users("12");
-        UserRepository.save(myModel);
-    }
 
     @SneakyThrows
     public String login(String email, String password) {
@@ -57,9 +55,12 @@ public class UsersService implements CommandLineRunner {
     }
 
     public String generateToken(Users user) {
-        return user.getCompanyId() + user.getId() + user.getRoleId();
+        return user.getCompanyId()+"&" + user.getId()+"&" + user.getRoleId();
     }
-
+public String [] getToken(String token){
+        String[] tokenS=token.split("&");
+        return tokenS;
+}
     public boolean findUser(Users user) {
 
         Users foundUser = UserRepository.findUserByEmail(user.getAddress().getEmail());
@@ -98,11 +99,11 @@ public class UsersService implements CommandLineRunner {
     }
 
     @SneakyThrows
-    public List<UserDTO> getCustomers(int pageNumber, int pageSize) {
+    public List<UserDTO> getUsers(int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         //company and role will be taken from token
         Page<Users> users = UserRepository.findAllByCompanyIdAndRoleId("1", "1", pageable);
-        return users.map(mapStructMapper::usersToUserDTO).getContent();
+        return users.map(userMapper::usersToUserDTO).getContent();
     }
 
 
