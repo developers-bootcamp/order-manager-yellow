@@ -1,4 +1,5 @@
 package com.yellow.ordermanageryellow.model;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

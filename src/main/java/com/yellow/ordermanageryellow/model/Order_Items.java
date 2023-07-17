@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "Order_Items")
-
 public class Order_Items {
     @DBRef
     private Product productId;

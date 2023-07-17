@@ -14,13 +14,18 @@ import java.util.List;
 public interface ProductMapper {
 
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
-    @Mapping(source="productCategoryId",target  ="productCategoryId.id")
-    public Product dtoToProduct(ProductDTO productDTO );
-    @Mapping(source="productCategoryId.id",target  ="productCategoryId")
-    public ProductDTO productToDto(Product product );
-    public List<ProductDTO> productToDto(List<Product> list);
-    public List<Product> dtoToProduct(List<ProductDTO>list);
 
-    public ProductNameDTO ProductToProductNameDTO(Product product );
-    public List<ProductNameDTO> ProductToProductNameDTO(List<Product>list);
+    @Mapping(source = "productCategoryId", target = "productCategoryId.id")
+    public Product dtoToProduct(ProductDTO productDTO);
+
+    @Mapping(source = "productCategoryId.id", target = "productCategoryId")
+    public ProductDTO productToDto(Product product);
+
+    public List<ProductDTO> productToDto(List<Product> list);
+
+    public List<Product> dtoToProduct(List<ProductDTO> list);
+
+    public ProductNameDTO ProductToProductNameDTO(Product product);
+
+    public List<ProductNameDTO> ProductToProductNameDTO(List<Product> list);
 }

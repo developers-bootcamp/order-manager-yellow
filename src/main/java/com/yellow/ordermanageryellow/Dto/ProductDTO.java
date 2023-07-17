@@ -16,7 +16,7 @@ public class ProductDTO {
     private String name;
     private String desc;
     private double price;
-    private String ProductCategoryId;
+    private String productCategoryId;
     private int inventory;
 
 }

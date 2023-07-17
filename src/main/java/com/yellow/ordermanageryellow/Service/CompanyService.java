@@ -1,4 +1,5 @@
 package com.yellow.ordermanageryellow.Service;
+
 import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.model.Company;
 import com.yellow.ordermanageryellow.model.Users;
@@ -9,14 +10,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CompanyService {
-//    private final CompanyRepository CompanyRepository;
-//    @Autowired
-//    public CompanyService(CompanyRepository CompanyRepository) {
-//        this.CompanyRepository = CompanyRepository;
-//    }
-//    @Override
-//    public void run(String... args) {
-//        Company Company = new Company("12");
-//        CompanyRepository.save(Company);
-//    }
+
 }

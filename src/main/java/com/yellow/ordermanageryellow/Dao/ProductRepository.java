@@ -10,10 +10,9 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends MongoRepository<Product, String> {
-boolean existsByName(String name);
+    boolean existsByName(String name);
 
     @Query("{'name': { $regex: '^?1' }}")
-    List<Product> findByCompanyId_NameAndPrefix(String companyId, String prefix);
-
+    List<Product> findByCompanyIdAndNameAndPrefix(String companyId, String prefix);
     Product findByName(String name);
 }

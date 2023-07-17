@@ -6,7 +6,8 @@ import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-enum name{ Admin,employee,customer};
+enum name {Admin, employee, customer};
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +19,6 @@ public class Roles {
     private name name;
     private String desc;
     private AuditData auditData;
-
 
 
 }

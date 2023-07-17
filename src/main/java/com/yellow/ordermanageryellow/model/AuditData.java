@@ -7,11 +7,11 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class AuditData {
     private LocalDate createDate;
     private LocalDate updateDate;

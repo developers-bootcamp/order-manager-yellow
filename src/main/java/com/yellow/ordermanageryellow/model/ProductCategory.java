@@ -17,10 +17,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "ProductCategory")
 
 public class ProductCategory {
-    public ProductCategory(String id) {
-        this.id = id;
-    }
-
     @Id
     private String id;
     private String name;

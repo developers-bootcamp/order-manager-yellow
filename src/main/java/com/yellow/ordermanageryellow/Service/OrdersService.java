@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class OrdersService  {
-    private  OrdersRepository OrdersRepository;
+public class OrdersService {
+    private OrdersRepository OrdersRepository;
 
 }

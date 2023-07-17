@@ -14,56 +14,52 @@ import java.util.NoSuchElementException;
 @RequestMapping("/product")
 @RestController
 public class ProductController {
-   @Autowired
+    @Autowired
     private ProductService productService;
 
     @PostMapping
     public Product addProduct(@RequestBody Product product) throws ObjectAllReadyExists {
-        return  productService.addProduct(product);
+        return productService.addProduct(product);
     }
 
     @GetMapping("/names/{prefix}")
-    public ResponseEntity getAllNamesProducts(@PathVariable("prefix") String prefix,@RequestHeader ("token")String token){
-        try{
-        return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProductsNames(token,prefix)) ;
-    }
-    catch (Exception e ){
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()) ;
+    public ResponseEntity getAllNamesProducts(@PathVariable("prefix") String prefix, @RequestHeader("token") String token) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProductsNames(token, prefix));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @GetMapping
-    public ResponseEntity getAllProduct(){
-        try{
-            return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts()) ;
-        }
-    catch (Exception e ){
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()) ;
+    public ResponseEntity getAllProduct() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
     @PutMapping
-    public ResponseEntity editProduct(@RequestBody Product product){
-       try{
-           Product updatedProduct=this.productService.editProduct(product);
-           return ResponseEntity.ok(updatedProduct);
-       }
-       catch (NoSuchElementException e){
-           return new ResponseEntity(HttpStatus.NOT_FOUND);
-       }
-       catch (Exception e) {
-           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-       }
+    public ResponseEntity editProduct(@RequestBody Product product) {
+        try {
+            Product updatedProduct = this.productService.editProduct(product);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity deleteProduct(@PathVariable("id") String id) {
         try {
             this.productService.deleteProduct(id);
             return ResponseEntity.ok().build();
-        }
-            catch(EmptyResultDataAccessException e) {
+        } catch (EmptyResultDataAccessException e) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
-            }
-         catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }

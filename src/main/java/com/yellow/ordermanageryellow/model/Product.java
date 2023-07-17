@@ -9,8 +9,10 @@ import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-enum Discount{
-    Percentage,FixedAmount
+import java.time.LocalDate;
+
+enum Discount {
+    Percentage, FixedAmount
 }
 
 @Getter
@@ -27,9 +29,13 @@ public class Product {
     private double price;
     private Discount discount;
     @DBRef
-    private ProductCategory ProductCategoryId;
+    private ProductCategory productCategoryId;
     private int inventory;
     @DBRef
     private Company companyId;
     private AuditData auditData;
+
+    public Product(LocalDate date) {
+        this.auditData =  new AuditData(this.auditData.getCreateDate(),date);
+    }
 }
