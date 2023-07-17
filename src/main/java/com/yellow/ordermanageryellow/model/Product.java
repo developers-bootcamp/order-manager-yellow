@@ -1,13 +1,15 @@
 package com.yellow.ordermanageryellow.model;
 
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-enum Discount{
-    Percentage,FixedAmount
-}
 @Collation
+@Getter
+
+@Data
 @Document(collection = "Product")
 
 public class Product {
@@ -20,6 +22,7 @@ public class Product {
     private String name;
     private String desc;
     private double price;
+    private int sumDiscount;
     private Discount discount;
     private ProductCategory categoryId;
     private int inventory;
