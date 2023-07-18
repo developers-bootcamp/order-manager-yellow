@@ -28,4 +28,6 @@ public class Orders {
     public Orders(String id) {
         this.id = id;
     }
+    public Orders() {
+}
 }
