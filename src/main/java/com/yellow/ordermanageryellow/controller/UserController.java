@@ -2,7 +2,7 @@ package com.yellow.ordermanageryellow.controller;
 
 import com.yellow.ordermanageryellow.DTO.UserDTO;
 import com.yellow.ordermanageryellow.DTO.UserMapper;
-import com.yellow.ordermanageryellow.Service.UsersService;
+import com.yellow.ordermanageryellow.service.UsersService;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
 import com.yellow.ordermanageryellow.model.Users;
