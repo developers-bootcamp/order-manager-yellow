@@ -11,10 +11,9 @@ import java.time.LocalDate;
 @SpringBootApplication
 public class OrderManagerYellowApplication {
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+        SpringApplication.run(OrderManagerYellowApplication.class, args);
+    }
 
-		SpringApplication.run(OrderManagerYellowApplication.class, args);
-		Orders o=new Orders();
-}
 }
 
