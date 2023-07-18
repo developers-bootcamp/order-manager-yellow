@@ -1,4 +1,4 @@
-package com.yellow.ordermanageryellow.Dao;
+package com.yellow.ordermanageryellow.dao;
 
 import com.yellow.ordermanageryellow.model.Users;
 import org.springframework.data.domain.Page;

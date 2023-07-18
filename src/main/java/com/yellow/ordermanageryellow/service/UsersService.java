@@ -1,8 +1,8 @@
-package com.yellow.ordermanageryellow.Service;
+package com.yellow.ordermanageryellow.service;
 
 import com.yellow.ordermanageryellow.DTO.UserDTO;
 import com.yellow.ordermanageryellow.DTO.UserMapper;
-import com.yellow.ordermanageryellow.Dao.UserRepository;
+import com.yellow.ordermanageryellow.dao.UserRepository;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
 import com.yellow.ordermanageryellow.exception.WrongPasswordException;
