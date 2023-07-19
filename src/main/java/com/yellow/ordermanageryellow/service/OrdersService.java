@@ -4,6 +4,8 @@ import com.yellow.ordermanageryellow.dao.OrdersRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Orders.status;
+import com.yellow.ordermanageryellow.security.EncryptedData;
+import com.yellow.ordermanageryellow.security.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +23,8 @@ import java.util.Optional;
 public class OrdersService {
     @Autowired
     private final OrdersRepository ordersRepository;
-
+    @Autowired
+    private JwtToken jwtToken;
     @Autowired
     public OrdersService(OrdersRepository OrdersRepository) {
         this.ordersRepository = OrdersRepository;
@@ -32,15 +35,13 @@ public class OrdersService {
 
     public List<Orders> getOrders(String token, String userId, Orders.status status, int pageNumber) {
 
-        String companyId = token;
-        Sort.Order sortOrder = Sort.Order.asc("auditData.updateDate");
+        String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);        Sort.Order sortOrder = Sort.Order.asc("auditData.updateDate");
         Sort sort = Sort.by(sortOrder);
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize/* pageSize parameter omitted */, sort);
 
         Page<Orders> pageOrders = ordersRepository.findByCompanyId_IdAndOrderStatusIdAndEmployee(companyId, status, userId, pageable);
         return pageOrders.getContent();
-
     }
 
     public String insert(Orders newOrder) {

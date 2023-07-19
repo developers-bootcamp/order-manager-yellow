@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 
-
 public class AuditData {
     private LocalDate createDate;
     private LocalDate updateDte;
