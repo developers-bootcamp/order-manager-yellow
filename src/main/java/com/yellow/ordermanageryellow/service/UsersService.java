@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @Service
-public class UsersService {
+public class UsersService  {
     private final UserRepository UserRepository;
     private final UserMapper userMapper;
 
