@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "Roles")
 
 public class Roles {
+    @Id
     private String id;
     private RoleNames name;
     private String desc;
