@@ -11,8 +11,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+
 @Data
 @Document(collection = "Orders")
 
@@ -22,12 +21,14 @@ public class Orders {
     private Users employee;
     private Users customer;
     private double totalAmount;
+
+
     @DBRef
     private List<Order_Items> orderItems;
     private status orderStatusId;
     private Company companyId;
-    private long creditCardNumber;
-    private LocalDate expiryOn;
+    private String creditCardNumber;
+    private String expiryOn;
     private String cvc;
     private Boolean notificationFlag;
     @DBRef
