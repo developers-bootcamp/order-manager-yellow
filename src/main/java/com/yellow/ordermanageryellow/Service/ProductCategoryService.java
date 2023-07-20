@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -42,7 +41,7 @@ public class ProductCategoryService {
         return this.productCategoryRepository.save(newCategory);
     }
 @SneakyThrows
-    public void delete(String token,String categoryId) throws NoPermissionException {
+    public void delete(String token,String categoryId) {
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         ProductCategory categoryFromDb = this.productCategoryRepository.findById(categoryId).orElse(null);
@@ -56,7 +55,7 @@ public class ProductCategoryService {
         this.productCategoryRepository.deleteById(categoryId);
     }
     @SneakyThrows
-    public ProductCategory update(String token,ProductCategory updatedCategory) throws NoPermissionException {
+    public ProductCategory update(String token,ProductCategory updatedCategory) {
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         ProductCategory categoryFromDb = this.productCategoryRepository.findById(updatedCategory.getId()).orElse(null);
@@ -67,22 +66,22 @@ public class ProductCategoryService {
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
         if( !wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory))
             throw new NoPermissionException("You do not have permission to update product category");
-        updatedCategory.setAuditData(new AuditData(categoryFromDb.getAuditData().getCreateDate(), LocalDate.now()));
+        updatedCategory.setAuditData(new AuditData(categoryFromDb.getAuditData().getCreateDate(), LocalDateTime.now()));
         return this.productCategoryRepository.save(updatedCategory);
     }
     //This function has to be deleted, Just for trying the token
     public String fill() {
-        AuditData d = new AuditData(LocalDate.now(),LocalDate.now());
+        AuditData d = new AuditData(LocalDateTime.now(),LocalDateTime.now());
         Company c = new Company("7", "AAAAAAAAA", "55", d);
         companyRepository.save(c);
-        Roles roles = new Roles("3", RoleNames.ADMIN, "cust", d);
+        Roles roles = new Roles("2", RoleNames.ADMIN, "cust", d);
         rolesRepository.save(roles);
-        Address a = new Address("0580000000", "mezada 7", "aaa");
-        Users user = new Users("8", "Q", "q", a, roles, c, d);
+        Address a = new Address("3", "058", "Sadigura","@");
+        Users user = new Users("100", "Shlomo", "1000", a, roles, c, d);
         userRepository.save(user);
-        ProductCategory productCategory = new ProductCategory("6", "bc", "yu", c, d);
+        ProductCategory productCategory = new ProductCategory("4", "love", "great", c, d);
         productCategoryRepository.save(productCategory);
-        ProductCategory productCategory1 = new ProductCategory("7", "as", "vg", c, d);
+        ProductCategory productCategory1 = new ProductCategory("90", "Happy", "coffee", c, d);
         productCategoryRepository.save(productCategory1);
         return jwtToken.generateToken(user);
     }

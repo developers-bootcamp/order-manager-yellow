@@ -92,13 +92,14 @@ public class UsersService  {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if( !wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory)){
+        if(!wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
+        UserRepository.deleteById(id);
     }
 
     @SneakyThrows
-    public Users updateUser(Users user, String token) {
+    public Users updateUser(Users user, String token) throws NoPermissionException {
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Users userFromDB = this.UserRepository.findById(user.getId()).orElse(null);

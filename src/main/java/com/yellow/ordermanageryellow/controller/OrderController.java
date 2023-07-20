@@ -11,7 +11,6 @@ import com.yellow.ordermanageryellow.model.Orders;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-
 @RestController
 @RequestMapping("/order")
 public class OrderController {
