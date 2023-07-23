@@ -13,7 +13,7 @@ public interface UserRepository extends MongoRepository<Users, String> {
    Users findUserByEmail(String email);
    @Query(value = "{'address.email': ?0}", exists = true)
    boolean existsByAddressEmail(String email);
-   @Autowired
+
    User getByAddressEmail(String email);
-//   boolean existsByAddressEmail(String email);
+
 }

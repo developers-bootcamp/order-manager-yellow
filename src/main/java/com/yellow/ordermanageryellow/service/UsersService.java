@@ -62,7 +62,7 @@ public class UsersService  {
             user.setRoleId(rolesRepository.getByName(RoleName.ADMIN));
             AuditData auditData = new AuditData();
             auditData.setCreateDate( LocalDate.now());
-            auditData.setUpdateDate(null);
+            auditData.setUpdateDate(LocalDate.now());
             user.setAuditData(auditData);
             if (companyRepository.existsByName(companyName)){
                 throw new ObjectAlreadyExistException("company already exists");
