@@ -15,7 +15,7 @@ import java.time.LocalDate;
 
 public class AuditData {
     private LocalDate createDate;
-    private LocalDate updateDte;
+    private LocalDate updateDate;
 
     public AuditData(LocalDate createDate) {
         this.createDate = createDate;

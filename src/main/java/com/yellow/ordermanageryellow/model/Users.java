@@ -24,11 +24,10 @@ public class Users {
 private String id;
 private String fullName;
 private String password;
-@DBRef
 private Address address;
-
+@DBRef
 private Roles roleId;
+@DBRef
 private Company companyId;
-    @DBRef
 private AuditData AuditData;
 }
