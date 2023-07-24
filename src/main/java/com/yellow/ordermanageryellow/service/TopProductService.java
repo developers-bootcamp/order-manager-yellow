@@ -1,11 +1,17 @@
 package com.yellow.ordermanageryellow.service;
 
 import com.mongodb.client.AggregateIterable;
-import com.yellow.ordermanageryellow.dao.OrdersRepository;
+import com.yellow.ordermanageryellow.DTO.ProductAmountDto;
+import com.yellow.ordermanageryellow.DTO.TopProductDTO;
+import com.yellow.ordermanageryellow.exceptions.NoDataException;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -14,20 +20,25 @@ import org.bson.Document;
 @Service
 public class TopProductService {
 
-    private final OrdersRepository ordersRepository;
-    @Autowired
-    private  MongoTemplate mongoTemplate;
-    @Autowired
-    public TopProductService(OrdersRepository ordersRepository, MongoTemplate mongoTemplate) {
-        this.ordersRepository = ordersRepository;
-        this.mongoTemplate = mongoTemplate;
-    }
 
-    public AggregateIterable<Document> TopSoldProduct() {
-        AggregateIterable<Document> result = mongoTemplate.getCollection("Orders").aggregate(Arrays.asList(new Document("$match",
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    public AggregateIterable<Document> aggregationTopSoldProduct() {
+        LocalDate currentDate = LocalDate.now();
+        LocalDate beginningOfCurrentMonth = currentDate.withDayOfMonth(1);
+        LocalDate threeMonthsAgo = beginningOfCurrentMonth.minusMonths(3);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String startDate = threeMonthsAgo.format(formatter);
+        String endDate = beginningOfCurrentMonth.format(formatter);
+        System.out.println(threeMonthsAgo);
+        AggregateIterable<Document> result = mongoTemplate.getCollection("Orders").aggregate(Arrays.asList(
+                new Document("$match",
                         new Document("audit_data.create_date",
-                                new Document("$gte", "2023-04-01T00:00:00Z")
-                                        .append("$lt", "2023-07-01T00:00:00Z"))),
+                                new Document("$gte", startDate)
+                                        .append("$lt", endDate))
+                                .append("order_status", "DONE")),
                 new Document("$unwind",
                         new Document("path", "$order_items")),
                 new Document("$group",
@@ -39,7 +50,7 @@ public class TopProductService {
                                                                 .append("format", "%Y-%m-%dT%H:%M:%SZ"))))
                                         .append("product", "$order_items.product_id"))
                                 .append("count",
-                                        new Document("$sum", 1L))),
+                                        new Document("$sum", "$order_items.quantity"))),
                 new Document("$lookup",
                         new Document("from", "Product")
                                 .append("localField", "_id.product")
@@ -59,27 +70,37 @@ public class TopProductService {
                 new Document("$project",
                         new Document("_id", 0L)
                                 .append("month", "$_id")
-                                .append("products",
+                                .append("product",
                                         new Document("$slice", Arrays.asList("$products", 2L))))));
+        return result;
+    }
+
+    @SneakyThrows
+    public List<TopProductDTO> topSoldProduct() {
+
+        AggregateIterable<Document> result = aggregationTopSoldProduct();
+        List<TopProductDTO> topProductsList = new ArrayList<>();
         for (Document document : result) {
-            System.out.println(document.toJson());
+            int monthInt = document.getInteger("month");
+            Month monthEnum = Month.of(monthInt);
+            TopProductDTO TopProductDTO = new TopProductDTO();
+            TopProductDTO.setMonth(monthEnum);
+            List<Document> products = (List<Document>) document.get("product");
+            List<ProductAmountDto> ListProductAmountDto = new ArrayList<>();
+            for (Document product : products) {
+                String productName = product.getString("product");
+                int totalQuantity = product.getInteger("totalQuantity");
+                ProductAmountDto productAmountDto = new ProductAmountDto();
+                productAmountDto.setProductName(productName);
+                productAmountDto.setAmount(totalQuantity);
+                ListProductAmountDto.add(productAmountDto);
+            }
+            TopProductDTO.setProducts(ListProductAmountDto);
+            topProductsList.add(TopProductDTO);
         }
+        if (topProductsList.size() == 0)
+            throw new NoDataException("no orders in the last three months");
+        return topProductsList;
 
-                return  result;
-        /*  Map<String, Map<String, Integer>> topProducts= new HashMap<>();
-       LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
-       MatchOperation filterMonth = match(new Criteria("ordersRepository.auditData.createDate").gt(threeMonthsAgo));
-       UnwindOperation unwind = Aggregation.unwind("ordersRepository.orderItems");
-       GroupOperation groupByMonthAndProduct = group("ordersRepository.auditData.createDate.month","ordersRepository.orderItems.productId").count().as("countProduct") ;;
-       SortOperation sortByPopDesc = sort(Sort.by(Sort.Direction.DESC, "$_id.month"));
-        GroupOperation groupByMonth = group("ordersRepository.auditData.createDate.month","ordersRepository.orderItems.productId").push(new BasicDBObject
-                ("product", "$_id.product").append
-                ("totalQuantity", "$count")).as("arr");
-        ProjectionOperation projectStage = Aggregation.project();
-       Aggregation aggregation = newAggregation(filterMonth);
-      AggregationResults<Document> product = mongoTemplate.aggregate(
-             aggregation,  "topProduct", Document.class);
-
- return null;*/
     }
 }

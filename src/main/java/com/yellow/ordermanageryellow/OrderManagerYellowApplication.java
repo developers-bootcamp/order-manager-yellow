@@ -12,6 +12,9 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 import org.bson.Document;
 import com.mongodb.client.MongoCollection;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Arrays;
 import org.bson.Document;
@@ -28,34 +31,8 @@ import com.mongodb.client.AggregateIterable;
 @EnableMongoRepositories
 @SpringBootApplication
 public class OrderManagerYellowApplication {
-    // private final OrdersRepository ordersRepository;
-
-    /* public OrderManagerYellowApplication(OrdersRepository ordersRepository, MongoTemplate mongoTemplate) {
-         this.ordersRepository = ordersRepository;
-     }*/
+  public static void main(String[] args) {
+         SpringApplication.run(OrderManagerYellowApplication.class, args);
 
 
-
-
-    public static void main(String[] args) {
-        //ApplicationContext context =
-           SpringApplication.run(OrderManagerYellowApplication.class, args);
-        //SpringApplication.run(OrderManagerYellowApplication.class, args);
-        /*
-         * Requires the MongoDB Java Driver.
-         * https://mongodb.github.io/mongo-java-driver
-         */
-
-        /*   MongoClient mongoClient = new MongoClient(
-                new MongoClientURI(
-                        "mongodb://localhost:27017/"
-                )
-        );*/
-     /*   com.mongodb.client.MongoClient mongoClient = MongoClients.create("mongodb://localhost:27017");
-        MongoDatabase database = mongoClient.getDatabase("Orders");
-        MongoCollection<Document> collection = database.getCollection("Orders");*/
-        // AggregateIterable<Document> result = mongoTemplate.getCollection("Orders").aggregate(Arrays.asList(...));
-       /* OrderManagerYellowApplication mainClass = context.getBean(OrderManagerYellowApplication.class);
-        mainClass.q();
-*/
     }}
