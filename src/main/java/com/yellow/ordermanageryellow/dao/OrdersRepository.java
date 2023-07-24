@@ -1,11 +1,9 @@
-package com.yellow.ordermanageryellow.Dao;
+package com.yellow.ordermanageryellow.dao;
 
 import com.yellow.ordermanageryellow.model.Orders;
-import com.yellow.ordermanageryellow.model.Users;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.List;
 
 public interface OrdersRepository extends MongoRepository<Orders, String> {
