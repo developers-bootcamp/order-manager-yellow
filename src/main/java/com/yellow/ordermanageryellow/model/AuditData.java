@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -11,8 +12,16 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+
 
 public class AuditData {
     private LocalDate createDate;
     private LocalDate updateDte;
+
+    public AuditData(LocalDate createDate) {
+        this.createDate = createDate;
+    }
 }
+
+

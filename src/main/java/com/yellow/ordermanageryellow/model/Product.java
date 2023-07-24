@@ -1,5 +1,6 @@
 package com.yellow.ordermanageryellow.model;
 
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,8 @@ enum Discount{
     Percentage,FixedAmount
 }
 @Collation
+@SuperBuilder(toBuilder = true)
+
 @Document(collection = "Product")
 
 public class Product {

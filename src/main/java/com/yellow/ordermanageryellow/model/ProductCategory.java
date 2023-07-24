@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "ProductCategory")
+@SuperBuilder(toBuilder = true)
 
 public class ProductCategory {
     public ProductCategory(String id) {

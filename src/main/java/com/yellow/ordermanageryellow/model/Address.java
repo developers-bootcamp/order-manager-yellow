@@ -1,4 +1,5 @@
 package com.yellow.ordermanageryellow.model;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
+
 
 public class Address {
     @Id
