@@ -54,7 +54,7 @@ public class ProductCategoryServiceTest {
 
         LocalDateTime date = LocalDateTime.now();
         LocalDateTime created = productCategory.getAuditData().getCreateDate();
-        productCategoryService.update(productCategory);
+        productCategoryService.update("",productCategory);
 
         Mockito.verify(productCategoryRepository, Mockito.times(1)).save(any(ProductCategory.class));
         assertThat(date.isBefore(productCategory.getAuditData().getUpdateDte())).isTrue();

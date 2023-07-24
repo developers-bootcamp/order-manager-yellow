@@ -22,7 +22,7 @@ public class OrderController {
     }
 
     @GetMapping("/{userId}/{status}/{pageNumber}")
-    public ResponseEntity getOrders(@RequestHeader String token, @PathVariable String userId, @PathVariable Orders.status status, @PathVariable int pageNumber) {
+    public ResponseEntity getOrders(@RequestHeader("Authorization") String token, @PathVariable String userId, @PathVariable String status, @PathVariable int pageNumber) {
         try {
             List<Orders> orders = orderservice.getOrders(token, userId, status, pageNumber);
             return ResponseEntity.ok(orders);
