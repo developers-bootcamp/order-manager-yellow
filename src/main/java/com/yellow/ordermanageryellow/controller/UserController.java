@@ -33,8 +33,14 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public ResponseEntity<String> login(@RequestParam  String password, @RequestParam String email){
-        return usersService.login(email,password);
+    public ResponseEntity<String> login(@RequestParam String password, @RequestParam String email) {
+        try {
+            return ResponseEntity.ok().body(usersService.login(email, password));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
     @PostMapping()
     @RequestMapping("/signUp")
