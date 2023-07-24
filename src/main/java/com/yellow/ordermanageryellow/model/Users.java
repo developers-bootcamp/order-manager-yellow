@@ -15,18 +15,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "Users")
-
 public class Users {
+    public Users(String id) {
+        this.id = id;
+    }
     @Id
-    private String id;
-    private String fullName;
-    private String password;
-    private Address address;
-    @DBRef
-    private Roles roleId;
-    @DBRef
-    private Company companyId;
-    private AuditData AuditData;
-
-
+private String id;
+private String fullName;
+private String password;
+private Address address;
+@DBRef
+private Roles roleId;
+@DBRef
+private Company companyId;
+private AuditData AuditData;
 }
