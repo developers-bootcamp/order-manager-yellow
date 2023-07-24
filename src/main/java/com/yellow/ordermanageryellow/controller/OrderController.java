@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+@CrossOrigin("http://localhost:3000")
+
 @RestController
 @RequestMapping("/order")
 public class OrderController {

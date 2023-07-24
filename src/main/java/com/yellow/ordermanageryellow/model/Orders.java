@@ -18,7 +18,9 @@ import java.util.List;
 public class Orders {
     @Id
     private String id;
+    @DBRef
     private Users employee;
+    @DBRef
     private Users customer;
     private double totalAmount;
 
@@ -26,12 +28,12 @@ public class Orders {
     @DBRef
     private List<Order_Items> orderItems;
     private status orderStatusId;
+    @DBRef
     private Company companyId;
     private String creditCardNumber;
     private String expiryOn;
     private String cvc;
     private Boolean notificationFlag;
-    @DBRef
     private AuditData auditData;
 
     public Orders(String id) {

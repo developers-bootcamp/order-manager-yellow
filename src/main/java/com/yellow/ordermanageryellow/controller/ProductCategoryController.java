@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/categories")
 public class ProductCategoryController {
@@ -28,7 +28,8 @@ public class ProductCategoryController {
         List<ProductCategory> categories;
         try {
             categories = productCategoryService.findAll();
-            return new ResponseEntity<>(categories, HttpStatus.OK);
+            System.out.println(categories);
+                    return new ResponseEntity<>(categories, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
