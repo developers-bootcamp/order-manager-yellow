@@ -7,8 +7,9 @@
     "\\src\\main\\java\\com",
     "\\src\\main\\java\\com\\yellow",
     "\\src\\main\\java\\com\\yellow\\ordermanageryellow",
-    "\\src\\main\\java\\com\\yellow\\ordermanageryellow\\Service"
+    "\\src\\main\\java\\com\\yellow\\ordermanageryellow\\service",
+    "\\src\\test"
   ],
-  "SelectedNode": "\\src\\main\\java\\com\\yellow\\ordermanageryellow\\Service\\OrdersService.java",
+  "SelectedNode": "\\src\\main\\java\\com\\yellow\\ordermanageryellow\\service\\UsersService.java",
   "PreviewInSolutionExplorer": false
 }
