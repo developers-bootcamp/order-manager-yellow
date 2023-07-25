@@ -12,10 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-enum Discount {
-    Percentage, FixedAmount
-}
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -29,6 +25,7 @@ public class Product {
     private String desc;
     private double price;
     private Discount discount;
+    private  int discountAmount;
     @DBRef
     private ProductCategory productCategoryId;
     private int inventory;
