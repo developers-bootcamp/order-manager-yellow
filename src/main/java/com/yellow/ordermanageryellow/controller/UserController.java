@@ -20,6 +20,7 @@ import java.util.List;
 
 
 @RestController
+@CrossOrigin("http://localhost:3000")
 @RequestMapping("/User")
 public class UserController {
 
@@ -42,6 +43,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @PostMapping()
     @RequestMapping("/signUp")
     public ResponseEntity<String> signUP(@RequestParam("fullName") String fullName, @RequestParam("companyName") String companyName, @RequestParam("email") String email,
