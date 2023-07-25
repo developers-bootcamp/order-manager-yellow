@@ -69,23 +69,23 @@ public class OrdersService {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
 
-       ordersRepository.save(currencyOrder);
+        ordersRepository.save(currencyOrder);
         return true;
     }
 
-    public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order){
+    public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order) {
         HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
-        double total=0;
+        double total = 0;
         for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
             Order_Items orderItem = order.getOrderItems().get(i);
             Product p = orderItem.getProductId();
             HashMap<Double, Integer> o = new HashMap<Double, Integer>();
             double sum = 0;
             if (p.getDiscount() == Discount.FixedAmount) {
-                sum =( p.getPrice() - p.getDiscountAmount())*order.getOrderItems().get(i).getQuantity();
+                sum = (p.getPrice() - p.getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
                 o.put(sum, p.getDiscountAmount());
             } else {
-                sum = (p.getPrice() * p.getDiscountAmount()) / 100 * (100 - p.getDiscountAmount())*order.getOrderItems().get(i).getQuantity();
+                sum = (p.getPrice() * p.getDiscountAmount()) / 100 * (100 - p.getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
                 o.put(sum, p.getDiscountAmount());
             }
             calculatedOrder.put(p.getId(), o);

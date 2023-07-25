@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-@CrossOrigin("http://localhost:3000")
-
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
+
 @RequestMapping("/order")
 public class OrderController {
     private final OrdersService orderservice;
@@ -67,6 +67,7 @@ public class OrderController {
     @RequestMapping("/CalculateOrderAmount")
     public ResponseEntity<Map<String, HashMap<Double,Integer>>> calculateOrderController (@RequestBody Orders order){
         try{
+            System.out.println();
             return ResponseEntity.ok( this.orderservice.calculateOrderService(order));
         }
         catch (Exception e){

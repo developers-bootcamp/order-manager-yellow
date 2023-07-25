@@ -30,8 +30,8 @@ public class Orders {
     private status orderStatusId;
     @DBRef
     private Company companyId;
-    private String creditCardNumber;
-    private String expiryOn;
+    private long creditCardNumber;
+    private LocalDate expiryOn;
     private String cvc;
     private Boolean notificationFlag;
     private AuditData auditData;
