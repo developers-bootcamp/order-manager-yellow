@@ -36,13 +36,15 @@ public class ProductCategoryController {
     }
 
     @PostMapping
-    public ResponseEntity createCategory(@RequestBody ProductCategory newCategory) {
+    public ResponseEntity createCategory(@RequestHeader("Authorization") String token,@RequestBody ProductCategory newCategory) {
         ProductCategory createdCategory;
         try {
-            createdCategory = productCategoryService.insert(newCategory);
+            createdCategory = productCategoryService.insert(newCategory,token);
             return new ResponseEntity<>(createdCategory, HttpStatus.OK);
         } catch (ObjectAlreadyExistException ex) {
             return new ResponseEntity(HttpStatus.CONFLICT);
+        } catch (NoPermissionException ex) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         } catch (Exception ex) {
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }

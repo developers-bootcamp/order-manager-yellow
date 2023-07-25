@@ -9,8 +9,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Collation
-@NoArgsConstructor
+
 @Data
 @Collation
 @AllArgsConstructor
@@ -23,6 +22,5 @@ public class Roles {
     private RoleNames name;
     private String desc;
     private AuditData auditData;
-
 }
 

@@ -34,8 +34,7 @@ import java.util.NoSuchElementException;
 
 @Service
 public class UsersService  {
-    private final UserRepository UserRepository;
-    private final UserMapper userMapper;
+
     @Autowired
     private JwtToken jwtToken;
     @Autowired
@@ -50,8 +49,6 @@ public class UsersService  {
 
     @Autowired
     private  UserRepository userRepository;
-    @Autowired
-    private  RolesRepository rolesRepository;
     @Autowired
     private  CompanyRepository companyRepository;
 

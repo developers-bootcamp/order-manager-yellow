@@ -39,9 +39,17 @@ public class ProductCategoryService {
         return this.productCategoryRepository.findAll();
     }
 
-    public ProductCategory insert(ProductCategory newCategory)  throws ObjectAlreadyExistException{
+    public ProductCategory insert(ProductCategory newCategory,String token)  throws ObjectAlreadyExistException{
+        String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        Roles wholeRole = rolesRepository.findById(role).orElse(null);
+        if(!wholeRole.getName().equals(RoleNames.ADMIN))
+            throw new NoPermissionException("You do not have permission to delete product category");
         if (this.productCategoryRepository.existsByname(newCategory.getName()))
             throw new ObjectAlreadyExistException("category name already exist");
+        Company companyOfUser=new Company();
+        companyOfUser.setId(company);
+        newCategory.setCompanyId(companyOfUser);
         newCategory.setAuditData(new AuditData(LocalDateTime.now()));
         return this.productCategoryRepository.save(newCategory);
     }

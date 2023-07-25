@@ -34,7 +34,7 @@ public class ProductCategoryServiceTest {
     public void insertProductCategory_whenProductCategoryExists_throwException(ProductCategory productCategory) {
         Mockito.when(this.productCategoryRepository.existsByname(productCategory.getName())).thenReturn(true);
 
-        assertThatThrownBy(() -> productCategoryService.insert(productCategory)).isInstanceOf(ObjectAlreadyExistException.class);
+        assertThatThrownBy(() -> productCategoryService.insert(productCategory,"token")).isInstanceOf(ObjectAlreadyExistException.class);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ProductCategoryServiceTest {
     public void insertProductCategory_whenProductCategoryNotExists_StoreProductCategory(ProductCategory productCategory) {
         Mockito.when(productCategoryRepository.save(productCategory)).thenReturn(productCategory);
 
-        ProductCategory result = productCategoryService.insert(productCategory);
+        ProductCategory result = productCategoryService.insert(productCategory,"token");
 
         Mockito.verify(productCategoryRepository, Mockito.times(1)).save(any(ProductCategory.class));
         Assertions.assertEquals(productCategory, result);
