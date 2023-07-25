@@ -1,7 +1,7 @@
 package com.yellow.ordermanageryellow.controller;
 
 import com.yellow.ordermanageryellow.Exception.ObjectAllReadyExists;
-import com.yellow.ordermanageryellow.Service.ProductService;
+import com.yellow.ordermanageryellow.service.ProductService;
 import com.yellow.ordermanageryellow.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,8 +18,16 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping
-    public Product addProduct(@RequestBody Product product) throws ObjectAllReadyExists {
-        return productService.addProduct(product);
+    public ResponseEntity addProduct(@RequestBody Product product)  {
+      Product createdProduct;
+        try{
+            createdProduct=   productService.addProduct(product);
+            return new ResponseEntity<>(createdProduct, HttpStatus.OK);
+        }
+        catch (ObjectAllReadyExists e){
+            return  ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+
     }
 
     @GetMapping("/names/{prefix}")

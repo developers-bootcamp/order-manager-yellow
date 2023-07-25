@@ -1,24 +1,17 @@
 package com.yellow.ordermanageryellow.service;
 
 
-import com.yellow.ordermanageryellow.Dao.ProductRepository;
+import com.yellow.ordermanageryellow.dao.ProductRepository;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
 import com.yellow.ordermanageryellow.Dto.ProductNameDTO;
 import com.yellow.ordermanageryellow.Exception.ObjectAllReadyExists;
 import com.yellow.ordermanageryellow.model.AuditData;
-import com.yellow.ordermanageryellow.dao.ProductRepository;
 import com.yellow.ordermanageryellow.model.Product;
-import com.yellow.ordermanageryellow.model.Users;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -35,7 +28,7 @@ public class ProductService {
     public Product addProduct(Product product) throws ObjectAllReadyExists {
         if (productRepository.existsByName(product.getName()) == true)
             throw new ObjectAllReadyExists("Object Is All Ready Exists");
-        product.setAuditData(new AuditData(LocalDate.now(), null));
+        product.setAuditData(new AuditData(LocalDateTime.now(), null));
         Product newProduct = productRepository.insert(product);
         return newProduct;
 
@@ -56,7 +49,7 @@ public class ProductService {
         Product updatedProduct = productOptional.orElseThrow(() -> new Exception("company not found"));
         if (!updatedProduct.getName().equals(product.getName()) && productRepository.existsByName(product.getName()))
             throw new ObjectAllReadyExists("You need a unique name for product");
-        updatedProduct.getAuditData().setUpdateDate(LocalDate.now());
+        updatedProduct.getAuditData().setUpdateDate(LocalDateTime.now());
         updatedProduct = productRepository.save(updatedProduct);
         return updatedProduct;
     }

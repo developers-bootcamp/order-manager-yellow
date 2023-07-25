@@ -21,14 +21,6 @@ public class Roles {
     private AuditData auditData;
 
 
-    public Roles(String id) {
-        this.id = id;
-    }
-    public Roles(String id) {
-        this.id = id;
-    }
-    public Roles(String id) {
-        this.id = id;
-    }
+
 }
 

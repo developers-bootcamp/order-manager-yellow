@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 enum Discount {
     Percentage, FixedAmount
@@ -35,7 +36,7 @@ public class Product {
     private Company companyId;
     private AuditData auditData;
 
-    public Product(LocalDate date) {
+    public Product(LocalDateTime date) {
         this.auditData =  new AuditData(this.auditData.getCreateDate(),date);
     }
 }
