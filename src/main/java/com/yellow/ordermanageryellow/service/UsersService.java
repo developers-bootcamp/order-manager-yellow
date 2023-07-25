@@ -79,7 +79,6 @@ public class UsersService  {
         if (foundUser == null)
             return false;
         return true;
-
     }
 
     @SneakyThrows

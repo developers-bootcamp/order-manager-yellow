@@ -33,13 +33,12 @@ public class OrdersService {
     @Value("${pageSize}")
     private int pageSize;
 
-    public List<Orders> getOrders(String token, String userId, Orders.status status, int pageNumber) {
+    public List<Orders> getOrders(String token, String userId, String status, int pageNumber) {
 
-        String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);        Sort.Order sortOrder = Sort.Order.asc("auditData.updateDate");
+        String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        Sort.Order sortOrder = Sort.Order.asc("auditData.updateDate");
         Sort sort = Sort.by(sortOrder);
-
         Pageable pageable = PageRequest.of(pageNumber, pageSize/* pageSize parameter omitted */, sort);
-
         Page<Orders> pageOrders = ordersRepository.findByCompanyId_IdAndOrderStatusIdAndEmployee(companyId, status, userId, pageable);
         return pageOrders.getContent();
     }
@@ -56,7 +55,6 @@ public class OrdersService {
         if (currencyOrder.getOrderStatusId() != status.cancelled || currencyOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("You can only approve or cancel an order");
         }
-
         Optional<Orders> order = ordersRepository.findById(currencyOrder.getId());
         if (order.isEmpty()) {
             throw new NoSuchElementException();
@@ -64,7 +62,6 @@ public class OrdersService {
         if (order.get().getOrderStatusId() != status.New || order.get().getOrderStatusId() != status.packing) {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
-
        ordersRepository.save(currencyOrder);
         return true;
     }

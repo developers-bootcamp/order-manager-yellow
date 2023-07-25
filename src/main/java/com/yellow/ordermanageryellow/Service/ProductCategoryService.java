@@ -55,7 +55,7 @@ public class ProductCategoryService {
         this.productCategoryRepository.deleteById(categoryId);
     }
     @SneakyThrows
-    public ProductCategory update(String token,ProductCategory updatedCategory) {
+    public ProductCategory update(String token,ProductCategory updatedCategory){
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         ProductCategory categoryFromDb = this.productCategoryRepository.findById(updatedCategory.getId()).orElse(null);
