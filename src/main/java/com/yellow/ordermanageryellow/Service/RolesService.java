@@ -7,6 +7,4 @@ import com.yellow.ordermanageryellow.dao.RolesRepository;
 public class RolesService {
     @Autowired
     private  RolesRepository RolesRepository;
-
-private String a;}
-//nothing try commit
+}
