@@ -7,8 +7,8 @@
     "\\src\\main\\java\\com",
     "\\src\\main\\java\\com\\yellow",
     "\\src\\main\\java\\com\\yellow\\ordermanageryellow",
-    "\\src\\main\\java\\com\\yellow\\ordermanageryellow\\model"
+    "\\src\\main\\resources"
   ],
-  "SelectedNode": "\\src\\main\\java\\com\\yellow\\ordermanageryellow\\model\\Roles.java",
+  "SelectedNode": "\\src\\main\\resources\\application.properties",
   "PreviewInSolutionExplorer": false
 }

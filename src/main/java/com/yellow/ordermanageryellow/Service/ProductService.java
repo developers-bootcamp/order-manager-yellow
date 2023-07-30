@@ -1,7 +1,7 @@
 package com.yellow.ordermanageryellow.service;
 
 
-import com.yellow.ordermanageryellow.Service.ProductMapper;
+import com.yellow.ordermanageryellow.service.ProductMapper;
 import com.yellow.ordermanageryellow.dao.ProductRepository;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
 import com.yellow.ordermanageryellow.Dto.ProductNameDTO;
