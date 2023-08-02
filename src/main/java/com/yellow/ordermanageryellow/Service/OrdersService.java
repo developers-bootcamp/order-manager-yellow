@@ -29,7 +29,9 @@ public class OrdersService {
 
     @Value("${pageSize}")
     private int pageSize;
-
+    public Orders getOrderById(String id){
+        return ordersRepository.findById(id).get();
+    }
     public List<Orders> getOrders(String token, String userId, Orders.status status, int pageNumber) {
 
         String companyId = token;

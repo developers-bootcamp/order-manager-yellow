@@ -11,7 +11,7 @@ import com.yellow.ordermanageryellow.model.Orders;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/order")
 public class OrderController {
@@ -21,7 +21,15 @@ public class OrderController {
     public OrderController(OrdersService orderservice) {
         this.orderservice = orderservice;
     }
-
+    @GetMapping("/{id}")
+    public ResponseEntity getOrderById( @PathVariable String id) {
+        try {
+            Orders order = orderservice.getOrderById(id);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
     @GetMapping("/{userId}/{status}/{pageNumber}")
     public ResponseEntity getOrders(@RequestHeader String token, @PathVariable String userId, @PathVariable Orders.status status, @PathVariable int pageNumber) {
         try {
