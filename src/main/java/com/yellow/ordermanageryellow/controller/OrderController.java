@@ -1,6 +1,6 @@
 package com.yellow.ordermanageryellow.controller;
 
-import com.yellow.ordermanageryellow.service.OrdersService;
+import com.yellow.ordermanageryellow.Service.OrdersService;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,7 +67,6 @@ public class OrderController {
     @RequestMapping("/CalculateOrderAmount")
     public ResponseEntity<Map<String, HashMap<Double,Integer>>> calculateOrderController (@RequestBody Orders order){
         try{
-            System.out.println();
             return ResponseEntity.ok( this.orderservice.calculateOrderService(order));
         }
         catch (Exception e){

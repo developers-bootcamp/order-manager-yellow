@@ -1,6 +1,7 @@
 package com.yellow.ordermanageryellow.service;
 
 
+import com.yellow.ordermanageryellow.Service.ProductMapper;
 import com.yellow.ordermanageryellow.dao.ProductRepository;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
 import com.yellow.ordermanageryellow.Dto.ProductNameDTO;
@@ -63,8 +64,11 @@ public class ProductService {
         List<Product> products = productRepository.findAll().stream().toList();
         if (products == null)
             throw new NoSuchElementException("no content");
+
         List<ProductDTO> productDTOs = ProductMapper.INSTANCE.productToDto(products);
+
         return productDTOs;
     }
+
 
 }

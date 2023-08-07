@@ -113,7 +113,7 @@ public class UsersService  {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         //company and role will be taken from token
         Page<Users> users = UserRepository.findAllByCompanyIdAndRoleId("1", "1", pageable);
-        return users.map(userMapper::usersToUserDTO).getContent();
+            return users.map(userMapper::usersToUserDTO).getContent();
     }
     @SneakyThrows
     public Users signUp(String fullName,String companyName,String email,String password){

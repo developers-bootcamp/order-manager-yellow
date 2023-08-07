@@ -11,6 +11,5 @@ public class OrderManagerYellowApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OrderManagerYellowApplication.class, args);
 	}
-
 }
 

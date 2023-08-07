@@ -25,6 +25,7 @@ public class ProductCategoryService {
     }
 
     public List<ProductCategory> findAll() {
+
         return this.productCategoryRepository.findAll();
     }
 
