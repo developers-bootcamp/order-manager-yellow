@@ -44,9 +44,6 @@ public class Orders {
     private Boolean notificationFlag;
     private AuditData auditData;
 
-    public Orders(String id) {
-        this.id = id;
-    }
 
 
     public enum status {New, cancelled, approved, charging, packing, delivered}
