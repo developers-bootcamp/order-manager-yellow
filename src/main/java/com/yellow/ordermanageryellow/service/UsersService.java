@@ -1,8 +1,8 @@
 package com.yellow.ordermanageryellow.service;
 import com.yellow.ordermanageryellow.dao.CompanyRepository;
 import com.yellow.ordermanageryellow.dao.RolesRepository;
-import com.yellow.ordermanageryellow.DTO.UserDTO;
-import com.yellow.ordermanageryellow.DTO.UserMapper;
+import com.yellow.ordermanageryellow.Dto.UserDTO;
+import com.yellow.ordermanageryellow.Dto.UserMapper;
 import com.yellow.ordermanageryellow.dao.RolesRepository;
 import com.yellow.ordermanageryellow.dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
