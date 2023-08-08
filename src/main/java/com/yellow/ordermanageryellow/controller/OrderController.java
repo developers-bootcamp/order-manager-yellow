@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import com.yellow.ordermanageryellow.model.Orders;
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
 @RequestMapping("/order")
@@ -21,9 +24,18 @@ public class OrderController {
     public OrderController(OrdersService orderservice) {
         this.orderservice = orderservice;
     }
+    @GetMapping("/{id}")
+    public ResponseEntity getOrderById( @PathVariable String id) {
+        try {
+            Orders order = orderservice.getOrderById(id);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
 
     @GetMapping("/{userId}/{status}/{pageNumber}")
-    public ResponseEntity getOrders(@RequestHeader String token, @PathVariable String userId, @PathVariable Orders.status status, @PathVariable int pageNumber) {
+    public ResponseEntity getOrders(@RequestHeader("Authorization") String token, @PathVariable String userId, @PathVariable String status, @PathVariable int pageNumber) {
         try {
             List<Orders> orders = orderservice.getOrders(token, userId, status, pageNumber);
             return ResponseEntity.ok(orders);
@@ -58,5 +70,16 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
 
+    }
+    @PostMapping
+    @RequestMapping("/CalculateOrderAmount")
+    public ResponseEntity<Map<String, HashMap<Double,Integer>>> calculateOrderController (@RequestBody Orders order){
+        try{
+            return ResponseEntity.ok( this.orderservice.calculateOrderService(order));
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+
+        }
     }
 }
