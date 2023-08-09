@@ -5,7 +5,6 @@ import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.Users;
 import com.yellow.ordermanageryellow.DTO.UserDTO;
 import com.yellow.ordermanageryellow.DTO.UserMapper;
-import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.service.UsersService;
 import com.yellow.ordermanageryellow.model.Users;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
@@ -75,11 +74,10 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> createNewUser(@RequestBody Users newUser, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<String> createNewUser(@RequestBody Users newUser, @RequestHeader String token) {
         try {
-            usersService.createNewUser(newUser, token);
-        }catch (NoPermissionException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+
+            usersService.createNewUser(newUser);
         } catch (ObjectExistException e) {
             return ResponseEntity.status(HttpStatus.CREATED).body(e.getMessage());
         } catch (Exception e) {
@@ -89,11 +87,9 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable String id,@RequestHeader("Authorization") String token) {
+    public ResponseEntity<String> deleteUser(@PathVariable String id, @RequestHeader String token) {
         try {
-            usersService.deleteUser(id,token);
-        }catch (NoPermissionException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            usersService.deleteUser(id);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -103,9 +99,9 @@ public class UserController {
     }
 
     @PutMapping()
-    public ResponseEntity updateUser(@RequestBody Users user, @RequestHeader("Authorization") String token) {
+    public ResponseEntity updateUser(@RequestBody Users user, @RequestHeader String token) {
         try {
-            usersService.updateUser(user,token);
+            usersService.updateUser(user);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
@@ -116,10 +112,10 @@ public class UserController {
     }
 
     @GetMapping("/{pageNumber}")
-    public ResponseEntity getAllUsers(@PathVariable int pageNumber, @RequestHeader("Authorization") String token) {
+    public ResponseEntity getAllUsers(@PathVariable int pageNumber, @RequestHeader String token) {
         List<UserDTO> customers;
         try {
-            customers = usersService.getUsers(pageNumber,token);
+            customers = usersService.getUsers(pageNumber);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
@@ -127,9 +123,9 @@ public class UserController {
     }
 
     @GetMapping("/customersNames")
-    public ResponseEntity<HashMap<String, String>> getCustomersByPrefix(@RequestParam String prefix, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<HashMap<String, String>> getCustomersByPrefix(@RequestParam String prefix, @RequestHeader String token) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(usersService.getCustomerByNames(prefix,token));
+            return ResponseEntity.status(HttpStatus.OK).body(usersService.getCustomerByNames(prefix));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
