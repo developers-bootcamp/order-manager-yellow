@@ -4,6 +4,7 @@ import com.yellow.ordermanageryellow.dao.OrdersRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Orders.status;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,12 @@ public class OrdersService {
 
     @Value("${pageSize}")
     private int pageSize;
-
+    @Value("${rabbitmq.exchange.name}")
+    private String exchange;
+    @Value("${rabbitmq.routing.key}")
+    private String routingKey;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
     public List<Orders> getOrders(String token, String userId, Orders.status status, int pageNumber) {
 
         String companyId = token;
@@ -47,7 +53,11 @@ public class OrdersService {
         if (newOrder.getOrderStatusId() != status.New || newOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("Order should be in status new or approve");
         }
+        if(newOrder.getOrderStatusId() == status.approved){
+            newOrder.setOrderStatusId(status.charging);
+            rabbitTemplate.convertAndSend(exchange,routingKey,newOrder);}
         Orders order = ordersRepository.insert(newOrder);
+
         return order.getId();
     }
 
@@ -63,7 +73,9 @@ public class OrdersService {
         if (order.get().getOrderStatusId() != status.New || order.get().getOrderStatusId() != status.packing) {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
-
+        if(currencyOrder.getOrderStatusId() == status.approved){
+            currencyOrder.setOrderStatusId(status.charging);
+            rabbitTemplate.convertAndSend(exchange,routingKey,currencyOrder);}
        ordersRepository.save(currencyOrder);
         return true;
     }
