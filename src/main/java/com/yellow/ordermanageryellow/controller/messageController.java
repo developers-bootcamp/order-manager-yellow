@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/message")
 public class messageController {
-   private RabbitMQProducer p;
+    private RabbitMQProducer p;
 
     public messageController(RabbitMQProducer p) {
         this.p = p;
@@ -20,3 +20,4 @@ public class messageController {
         return ResponseEntity.ok("!!!!");
     }
 }
+
