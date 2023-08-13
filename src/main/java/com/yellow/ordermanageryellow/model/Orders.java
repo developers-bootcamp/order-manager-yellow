@@ -37,7 +37,5 @@ public class Orders {
     private String cvc;
     private Boolean notificationFlag;
     private AuditData auditData;
-
-
     public enum status {New, cancelled, approved, charging, packing, delivered}
 }

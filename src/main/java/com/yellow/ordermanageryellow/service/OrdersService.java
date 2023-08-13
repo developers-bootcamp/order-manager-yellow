@@ -96,4 +96,7 @@ public class OrdersService {
         calculatedOrder.put("-1", o);
         return calculatedOrder;
     }
+    public List<Orders> getOrdersWithNotificationFlag() {
+        return ordersRepository.findByNotificationFlag(true);
+    }
 }
