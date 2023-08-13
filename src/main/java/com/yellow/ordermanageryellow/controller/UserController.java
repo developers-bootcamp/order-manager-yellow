@@ -55,10 +55,11 @@ public class UserController {
         }catch (NotValidStatusExeption ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
 
-        }catch (ObjectAlreadyExistException ex) {
-            return  ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-
         }
+//        catch (ObjectAlreadyExistException ex) {
+//            return  ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+//
+//        }
         catch (Exception ex) {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("something went wrong please try later  "+ex.getMessage());
         }
