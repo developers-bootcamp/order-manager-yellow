@@ -1,4 +1,4 @@
-package com.yellow.ordermanageryellow.dao;
+package com.yellow.ordermanageryellow.Dao;
 
 import com.yellow.ordermanageryellow.model.Users;
 import org.apache.catalina.User;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Repository
 public interface UserRepository extends MongoRepository<Users, String> {
-	  @Query("{'adress.email' : ?0}")
+
    Users findUserByEmail(String email);
    @Query(value = "{'address.email': ?0}", exists = true)
    boolean existsByAddressEmail(String email);
