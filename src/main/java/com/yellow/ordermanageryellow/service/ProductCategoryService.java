@@ -31,7 +31,7 @@ public class ProductCategoryService {
     public ProductCategory insert(ProductCategory newCategory) throws ObjectAlreadyExistException {
         if (this.productCategoryRepository.existsByname(newCategory.getName()))
             throw new ObjectAlreadyExistException("category name already exist");
-        newCategory.setAuditData(new AuditData(LocalDateTime.now()));
+       // newCategory.setAuditData(new AuditData(LocalDateTime.now()));
         return this.productCategoryRepository.save(newCategory);
     }
 
@@ -45,7 +45,7 @@ public class ProductCategoryService {
             throw new NoSuchElementException("category is not found");
         }
 
-        updatedCategory.setAuditData(new AuditData(Category.getAuditData().getCreateDate(), LocalDateTime.now()));
+      //  updatedCategory.setAuditData(new AuditData(Category.getAuditData().getCreateDate(), LocalDateTime.now()));
         return this.productCategoryRepository.save(updatedCategory);
     }
 }

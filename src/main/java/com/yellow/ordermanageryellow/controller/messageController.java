@@ -15,7 +15,7 @@ public class messageController {
         this.p = p;
     }
     @PostMapping("/publish")
-    public ResponseEntity<String> sendMessage(@RequestBody Try message){
+    public ResponseEntity<String> sendMessage(@RequestBody Orders message){
         p.sendMessage(message);
         return ResponseEntity.ok("!!!!");
     }

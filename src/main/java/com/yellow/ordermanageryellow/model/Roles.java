@@ -18,7 +18,7 @@ public class Roles {
     private String id;
     private RoleName name;
     private String desc;
-    private AuditData auditData;
+   // private AuditData auditData;
 
 
 

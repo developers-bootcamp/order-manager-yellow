@@ -137,7 +137,7 @@ public class UsersService  {
         AuditData auditData = new AuditData();
         auditData.setCreateDate(LocalDateTime.now());
         auditData.setUpdateDate(LocalDateTime.now());
-        user.setAuditData(auditData);
+      //  user.setAuditData(auditData);
         if (companyRepository.existsByName(companyName)){
             throw new ObjectAlreadyExistException("company already exists");
         }
@@ -147,7 +147,7 @@ public class UsersService  {
         AuditData auditData1=new AuditData();
         auditData1.setCreateDate(LocalDateTime.now());
         auditData1.setUpdateDate(LocalDateTime.now());
-        company.setAuditData(auditData1);
+      //  company.setAuditData(auditData1);
         user.setCompanyId(company);
         userRepository.save(user);
         return user;

@@ -20,8 +20,8 @@ public class RabbitMQProducer {
     private RabbitTemplate rabbitTemplate;
 
 
-    public void sendMessage(Try t){
-        LOGGER.info(String.format("message sent: ",t.toString()));
-        rabbitTemplate.convertAndSend(exchange,routingKey,t);
+    public void sendMessage(Orders o){
+        LOGGER.info(String.format("message sent: ",o.toString()));
+        rabbitTemplate.convertAndSend(exchange,routingKey,o);
     }
 }

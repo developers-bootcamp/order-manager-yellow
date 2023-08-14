@@ -28,5 +28,5 @@ private Address address;
 private Roles roleId;
 @DBRef
 private Company companyId;
-private AuditData AuditData;
+//private AuditData AuditData;
 }
