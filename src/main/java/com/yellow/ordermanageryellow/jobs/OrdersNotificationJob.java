@@ -11,7 +11,7 @@ import java.util.List;
 public class OrdersNotificationJob {
     @Autowired
     private OrdersService orderService;
-    @Scheduled(cron = "* * * * * ?")
+    @Scheduled(cron = "0 0,30 * * * ?")
     @Transactional
     public void OrderNotifications() throws NotFoundException {
         System.out.println("hi");
