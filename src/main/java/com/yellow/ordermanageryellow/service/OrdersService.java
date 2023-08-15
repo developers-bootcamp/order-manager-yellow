@@ -1,7 +1,7 @@
 package com.yellow.ordermanageryellow.service;
-import com.yellow.ordermanageryellow.dao.ProductRepository;
+import com.yellow.ordermanageryellow.Dao.ProductRepository;
 
-import com.yellow.ordermanageryellow.dao.OrdersRepository;
+import com.yellow.ordermanageryellow.Dao.OrdersRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.model.Discount;
 import com.yellow.ordermanageryellow.model.Order_Items;
@@ -88,7 +88,7 @@ public class OrdersService {
                 sum = (p.get().getPrice() * p.get().getDiscountAmount()) / 100 * (100 - p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
                 o.put(sum, p.get().getDiscountAmount());
             }
-            calculatedOrder.put(p.get().getId(), o);
+            calculatedOrder.put(p.get().getName(), o);
             total += sum;
         }
         HashMap<Double, Integer> o = new HashMap<Double, Integer>();
