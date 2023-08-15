@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.NoSuchElementException;
 
 
@@ -59,11 +60,13 @@ public class UsersService  {
         Users user = UserRepository.findByAddressEmail(email);
         if (user == null)
             throw new NotFoundException("user not exist");
-        else if (!user.getPassword().equals(password))
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            return this.jwtToken.generateToken(user);
+        } else {
             throw new WrongPasswordException("invalid password");
-        else return this.jwtToken.generateToken(user);
+        }
     }
-
 
     @SneakyThrows
     public Users createNewUser(Users newUser,String token) {
@@ -140,7 +143,9 @@ public class UsersService  {
         if(password.equals("")){
             throw new NotValidStatusExeption("password not  valid");
         }
-        user.setPassword(password);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(password);
+        user.setPassword(hashedPassword);
         if(!email.contains("@")){
             throw new NotValidStatusExeption("email not valid");
         }

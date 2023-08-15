@@ -57,7 +57,6 @@ public class UserController {
 
         }catch (ObjectAlreadyExistException ex) {
             return  ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-
         }
         catch (Exception ex) {
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("something went wrong please try later  "+ex.getMessage());
