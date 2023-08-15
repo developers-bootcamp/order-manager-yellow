@@ -79,9 +79,6 @@ public class TopProductService {
     public List<TopProductDTO> topSoldProduct() {
 
         AggregateIterable<Document> result = aggregationTopSoldProduct();
-        for (Document document : result) {
-            System.out.println(document);
-        }
         List<TopProductDTO> topProductsList = new ArrayList<>();
         for (Document document : result) {
             int monthInt = document.getInteger("month");
