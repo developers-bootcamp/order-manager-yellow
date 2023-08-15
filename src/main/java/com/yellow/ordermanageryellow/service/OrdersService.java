@@ -49,7 +49,7 @@ public class OrdersService {
     }
 
     public String insert(Orders newOrder) {
-        if (newOrder.getOrderStatusId() != status.New || newOrder.getOrderStatusId() != status.approved) {
+        if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("Order should be in status new or approve");
         }
         Orders order = ordersRepository.insert(newOrder);

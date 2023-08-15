@@ -33,28 +33,28 @@ public class TopProductService {
         String startDate = threeMonthsAgo.format(formatter);
         String endDate = beginningOfCurrentMonth.format(formatter);
         System.out.println(threeMonthsAgo);
-        AggregateIterable<Document> result = mongoTemplate.getCollection("Orders").aggregate(Arrays.asList(
-                new Document("$match",
-                        new Document("audit_data.create_date",
-                                new Document("$gte", startDate)
-                                        .append("$lt", endDate))
-                                .append("order_status", "DONE")),
+        AggregateIterable<Document> result = mongoTemplate.getCollection("Orders").aggregate(Arrays.asList(new Document("$match",
+                        new Document("auditData.createDate",
+                                new Document("$gte",
+                                        new java.util.Date(1648771200000L))
+                                        .append("$lt",
+                                                new java.util.Date(1719792000000L)))
+                                .append("orderStatusId", "delivered")),
                 new Document("$unwind",
-                        new Document("path", "$order_items")),
+                        new Document("path", "$orderItems")),
                 new Document("$group",
                         new Document("_id",
                                 new Document("month",
-                                        new Document("$month",
-                                                new Document("$dateFromString",
-                                                        new Document("dateString", "$audit_data.create_date")
-                                                                .append("format", "%Y-%m-%dT%H:%M:%SZ"))))
-                                        .append("product", "$order_items.product_id"))
+                                        new Document("$month", "$auditData.createDate"))
+                                        .append("product", "$orderItems.productId"))
                                 .append("count",
-                                        new Document("$sum", "$order_items.quantity"))),
+                                        new Document("$sum", "$orderItems.quantity"))),
+                new Document("$addFields",
+                        new Document("newField", "$_id.product.$id")),
                 new Document("$lookup",
                         new Document("from", "Product")
-                                .append("localField", "_id.product")
-                                .append("foreignField", "id")
+                                .append("localField", "_id.product.$id")
+                                .append("foreignField", "_id")
                                 .append("as", "product")),
                 new Document("$unwind",
                         new Document("path", "$product")
@@ -71,7 +71,7 @@ public class TopProductService {
                         new Document("_id", 0L)
                                 .append("month", "$_id")
                                 .append("product",
-                                        new Document("$slice", Arrays.asList("$products", 2L))))));
+                                        new Document("$slice", Arrays.asList("$products", 5L))))));
         return result;
     }
 
@@ -79,6 +79,9 @@ public class TopProductService {
     public List<TopProductDTO> topSoldProduct() {
 
         AggregateIterable<Document> result = aggregationTopSoldProduct();
+        for (Document document : result) {
+            System.out.println(document);
+        }
         List<TopProductDTO> topProductsList = new ArrayList<>();
         for (Document document : result) {
             int monthInt = document.getInteger("month");
