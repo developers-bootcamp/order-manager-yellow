@@ -68,8 +68,6 @@ public class ProductCategoryServiceTest {
         Mockito.when(this.productCategoryRepository.findById(productCategory.getId())).thenReturn(Optional.of(productCategory));
         Mockito.when(productCategoryRepository.save(productCategory)).thenReturn(productCategory);
 
-
-
         LocalDateTime date = LocalDateTime.now();
         LocalDateTime created = productCategory.getAuditData().getCreateDate();
         productCategory = productCategoryService.update("token", productCategory);
