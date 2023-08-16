@@ -1,9 +1,13 @@
 package com.yellow.ordermanageryellow.service;
+import com.yellow.ordermanageryellow.dao.ProductRepository;
 
 import com.yellow.ordermanageryellow.dao.OrdersRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
+import com.yellow.ordermanageryellow.model.Discount;
+import com.yellow.ordermanageryellow.model.Order_Items;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Orders.status;
+import com.yellow.ordermanageryellow.model.Product;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -81,9 +84,18 @@ public class OrdersService {
     }
 
 
+    public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order) {
+        HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
+        double total = 0;
+        for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
+            Order_Items orderItem = order.getOrderItems().get(i);
+            Optional<Product> p = productRepository.findById(orderItem.getProductId().getId());
+            HashMap<Double, Integer> o = new HashMap<Double, Integer>();
+            double sum = 0;
+            if (p.get().getDiscount() == Discount.FixedAmount) {
+
                 sum = (p.get().getPrice()- p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
                 o.put(sum, p.get().getDiscountAmount());
-
             } else {
                 sum = (p.get().getPrice() * p.get().getDiscountAmount()) / 100 * (100 - p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
                 o.put(sum, p.get().getDiscountAmount());

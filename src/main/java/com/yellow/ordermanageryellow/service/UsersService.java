@@ -4,6 +4,12 @@ import com.yellow.ordermanageryellow.dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dto.UserDTO;
 import com.yellow.ordermanageryellow.Dto.UserMapper;
 import com.yellow.ordermanageryellow.dao.UserRepository;
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
+import com.yellow.ordermanageryellow.Dto.UserDTO;
+import com.yellow.ordermanageryellow.Dto.UserMapper;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
+import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
@@ -44,7 +50,7 @@ public class UsersService  {
 
     @SneakyThrows
     public String login(String email, String password) {
-        Users user = UserRepository.findUserByEmail(email);
+        Users user = UserRepository.findByAddressEmail(email);
         if (user == null)
             throw new NotFoundException("user not exist");
         else if (!user.getPassword().equals(password))
@@ -72,8 +78,7 @@ public class UsersService  {
     }
 
     public boolean findUser(Users user) {
-
-        Users foundUser = UserRepository.findUserByEmail(user.getAddress().getEmail());
+        Users foundUser = UserRepository.findByAddressEmail(user.getAddress().getEmail());
         if (foundUser == null)
             return false;
         return true;
@@ -137,7 +142,7 @@ public class UsersService  {
         AuditData auditData = new AuditData();
         auditData.setCreateDate(LocalDateTime.now());
         auditData.setUpdateDate(LocalDateTime.now());
-      //  user.setAuditData(auditData);
+        user.setAuditData(auditData);
         if (companyRepository.existsByName(companyName)){
             throw new ObjectAlreadyExistException("company already exists");
         }
@@ -147,7 +152,7 @@ public class UsersService  {
         AuditData auditData1=new AuditData();
         auditData1.setCreateDate(LocalDateTime.now());
         auditData1.setUpdateDate(LocalDateTime.now());
-      //  company.setAuditData(auditData1);
+        company.setAuditData(auditData1);
         user.setCompanyId(company);
         userRepository.save(user);
         return user;
