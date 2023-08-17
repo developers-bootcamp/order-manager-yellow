@@ -3,8 +3,8 @@ package com.yellow.ordermanageryellow.controller;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.Users;
-import com.yellow.ordermanageryellow.DTO.UserDTO;
-import com.yellow.ordermanageryellow.DTO.UserMapper;
+import com.yellow.ordermanageryellow.Dto.UserDTO;
+import com.yellow.ordermanageryellow.Dto.UserMapper;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.service.UsersService;
 import com.yellow.ordermanageryellow.model.Users;
@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
-@CrossOrigin("http://localhost:3000")
 @RequestMapping("/User")
 public class UserController {
 
