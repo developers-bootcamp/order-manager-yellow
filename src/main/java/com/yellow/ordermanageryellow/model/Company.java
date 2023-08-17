@@ -20,5 +20,5 @@ public class Company {
     private String id;
     private String name;
     private String currency;
-   // private AuditData auditData;
+    private AuditData auditData;
 }

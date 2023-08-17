@@ -30,7 +30,7 @@ public class GraphService {
 
         Aggregation aggregation = newAggregation(
                 match(Criteria.where("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
-                match(Criteria.where("Statusorder").is(Orders.status.approved)),
+                match(Criteria.where("orderStatusId").is(Orders.status.approved)),
                 group("employee").count().as("countOfDeliveredOrders"),
                 project("countOfDeliveredOrders").and("id").as("employee"),
                 sort(Sort.Direction.DESC, "countOfDeliveredOrders"),

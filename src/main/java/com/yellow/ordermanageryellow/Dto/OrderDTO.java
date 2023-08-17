@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,15 +16,29 @@ public class OrderDTO {
     private String orderId ;
     private String customerId ;
     private int paymentAmount;
-    private String address;
-    private String email;
-    private String telephone;
     private Orders.status orderStatusId;
     private long creditCardNumber;
-    private LocalDate expiryOn;
+   // private LocalDate expiryOn;
     private String cvc;
 
-//	Credit/Debit
+    private PaymentType paymentType;
 
 
+    public enum PaymentType {
+        CREDIT,
+        DEBIT
+    }
+
+//    public String toJson() {
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.registerModule(new JavaTimeModule());
+//        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//
+//        try {
+//            return objectMapper.writeValueAsString(this);
+//        } catch (Exception e) {
+//            System.out.println(e.getMessage());
+//        }
+//        return null;
+//    }
 }

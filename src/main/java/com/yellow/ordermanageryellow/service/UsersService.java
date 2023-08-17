@@ -1,14 +1,8 @@
 package com.yellow.ordermanageryellow.service;
-import com.yellow.ordermanageryellow.dao.CompanyRepository;
-import com.yellow.ordermanageryellow.dao.RolesRepository;
-import com.yellow.ordermanageryellow.Dto.UserDTO;
-import com.yellow.ordermanageryellow.Dto.UserMapper;
-import com.yellow.ordermanageryellow.dao.UserRepository;
 import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dto.UserDTO;
 import com.yellow.ordermanageryellow.Dto.UserMapper;
-import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
@@ -142,7 +136,7 @@ public class UsersService  {
         AuditData auditData = new AuditData();
         auditData.setCreateDate(LocalDateTime.now());
         auditData.setUpdateDate(LocalDateTime.now());
-        user.setAuditData(auditData);
+      //  user.setAuditData(auditData);
         if (companyRepository.existsByName(companyName)){
             throw new ObjectAlreadyExistException("company already exists");
         }

@@ -1,6 +1,5 @@
 package com.yellow.ordermanageryellow;
 
-import com.yellow.ordermanageryellow.publisher.RabbitMQProducer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;

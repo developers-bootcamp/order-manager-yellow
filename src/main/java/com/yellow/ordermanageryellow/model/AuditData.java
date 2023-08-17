@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 @SuperBuilder(toBuilder = true)
 public class AuditData {
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createDate;
     private LocalDateTime updateDate;
     public AuditData(LocalDateTime createDate) {

@@ -1,9 +1,10 @@
 package com.yellow.ordermanageryellow.service;
-import com.yellow.ordermanageryellow.dao.ProductRepository;
 
-import com.yellow.ordermanageryellow.dao.OrdersRepository;
+import com.yellow.ordermanageryellow.Dao.OrdersRepository;
+import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
-import com.yellow.ordermanageryellow.model.Discount;
+//import com.yellow.ordermanageryellow.model.Discount;
+import com.yellow.ordermanageryellow.mapper.OrderMapper;
 import com.yellow.ordermanageryellow.model.Order_Items;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Orders.status;
@@ -56,10 +57,13 @@ public class OrdersService {
         if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("Order should be in status new or approve");
         }
-        if(newOrder.getOrderStatusId() == status.approved){
-            newOrder.setOrderStatusId(status.charging);
-            rabbitTemplate.convertAndSend(exchange,routingKey,newOrder);}
         Orders order = ordersRepository.insert(newOrder);
+        if(newOrder.getOrderStatusId() == status.approved){
+            order.setOrderStatusId(status.charging);
+            OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(order);
+            rabbitTemplate.convertAndSend(exchange,routingKey,orderDTO);
+            ordersRepository.save(order);}
+
 
         return order.getId();
     }
@@ -84,28 +88,28 @@ public class OrdersService {
     }
 
 
-    public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order) {
-        HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
-        double total = 0;
-        for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
-            Order_Items orderItem = order.getOrderItems().get(i);
-            Optional<Product> p = productRepository.findById(orderItem.getProductId().getId());
-            HashMap<Double, Integer> o = new HashMap<Double, Integer>();
-            double sum = 0;
-            if (p.get().getDiscount() == Discount.FixedAmount) {
-
-                sum = (p.get().getPrice()- p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
-                o.put(sum, p.get().getDiscountAmount());
-            } else {
-                sum = (p.get().getPrice() * p.get().getDiscountAmount()) / 100 * (100 - p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
-                o.put(sum, p.get().getDiscountAmount());
-            }
-            calculatedOrder.put(p.get().getName(), o);
-            total += sum;
-        }
-        HashMap<Double, Integer> o = new HashMap<Double, Integer>();
-        o.put(total, -1);
-        calculatedOrder.put("-1", o);
-        return calculatedOrder;
-    }
+//    public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order) {
+//        HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
+//        double total = 0;
+//        for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
+//            Order_Items orderItem = order.getOrderItems().get(i);
+//            Optional<Product> p = productRepository.findById(orderItem.getProductId().getId());
+//            HashMap<Double, Integer> o = new HashMap<Double, Integer>();
+//            double sum = 0;
+//            if (p.get().getDiscount() == Discount.FixedAmount) {
+//
+//                sum = (p.get().getPrice()- p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
+//                o.put(sum, p.get().getDiscountAmount());
+//            } else {
+//                sum = (p.get().getPrice() * p.get().getDiscountAmount()) / 100 * (100 - p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
+//                o.put(sum, p.get().getDiscountAmount());
+//            }
+//            calculatedOrder.put(p.get().getName(), o);
+//            total += sum;
+//        }
+//        HashMap<Double, Integer> o = new HashMap<Double, Integer>();
+//        o.put(total, -1);
+//        calculatedOrder.put("-1", o);
+//        return calculatedOrder;
+//    }
 }

@@ -34,9 +34,9 @@ public class Product {
     private int inventory;
     @DBRef
     private Company companyId;
-   // private AuditData auditData;
+    private AuditData auditData;
 
-  //  public Product(LocalDateTime date) {
-      //  this.auditData =  new AuditData(this.auditData.getCreateDate(),date);
- //   }
+    public Product(LocalDateTime date) {
+        this.auditData =  new AuditData(this.auditData.getCreateDate(),date);
+  }
 }
