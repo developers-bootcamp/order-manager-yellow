@@ -4,7 +4,7 @@ import com.yellow.ordermanageryellow.Dao.ProductCategoryRepository;
 import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.ProductCategory;
-import com.yellow.ordermanageryellow.model.RoleNames;
+import com.yellow.ordermanageryellow.model.RoleName;
 import com.yellow.ordermanageryellow.model.Roles;
 import com.yellow.ordermanageryellow.resolver.ProductCategoryResolver;
 import com.yellow.ordermanageryellow.security.JwtToken;
@@ -42,7 +42,7 @@ public class ProductCategoryServiceTest {
 
     @BeforeEach
     public void beforeEach(ProductCategory productCategory) {
-        lenient().when(rolesRepository.findById(any())).thenReturn(Optional.of(Roles.builder().name(RoleNames.ADMIN).build()));
+        lenient().when(rolesRepository.findById(any())).thenReturn(Optional.of(Roles.builder().name(RoleName.ADMIN).build()));
     }
 
     @Test
