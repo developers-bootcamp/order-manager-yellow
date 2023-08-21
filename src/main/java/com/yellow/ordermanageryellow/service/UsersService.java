@@ -3,6 +3,7 @@ import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dto.UserDTO;
 import com.yellow.ordermanageryellow.Dto.UserMapper;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
@@ -12,7 +13,14 @@ import lombok.SneakyThrows;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
 import com.yellow.ordermanageryellow.exception.WrongPasswordException;
+import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
+import com.yellow.ordermanageryellow.model.ProductCategory;
+import com.yellow.ordermanageryellow.model.RoleName;
+import com.yellow.ordermanageryellow.model.Roles;
 import com.yellow.ordermanageryellow.model.Users;
+import com.yellow.ordermanageryellow.security.EncryptedData;
+import com.yellow.ordermanageryellow.security.JwtToken;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -22,10 +30,16 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 
 @Service
 public class UsersService  {
+
+    @Autowired
+    private JwtToken jwtToken;
+    @Autowired
+    private RolesRepository rolesRepository;
     @Autowired
     private UserRepository UserRepository;
     @Autowired
@@ -36,8 +50,6 @@ public class UsersService  {
 
     @Autowired
     private  UserRepository userRepository;
-    @Autowired
-    private  RolesRepository rolesRepository;
     @Autowired
     private  CompanyRepository companyRepository;
 
@@ -50,8 +62,7 @@ public class UsersService  {
             throw new NotFoundException("user not exist");
         else if (!user.getPassword().equals(password))
             throw new WrongPasswordException("invalid password");
-        else return generateToken(user);
-
+        else return this.jwtToken.generateToken(user);
     }
 
 
@@ -63,44 +74,50 @@ public class UsersService  {
             throw new ObjectExistException("user is already exist");
     }
 
-    public String generateToken(Users user) {
-        return user.getCompanyId() + "&" + user.getId() + "&" + user.getRoleId();
-    }
-
-    public String[] getToken(String token) {
-        String[] tokenS = token.split("&");
-        return tokenS;
-    }
-
     public boolean findUser(Users user) {
         Users foundUser = UserRepository.findByAddressEmail(user.getAddress().getEmail());
         if (foundUser == null)
             return false;
         return true;
-
     }
 
     @SneakyThrows
-    public void deleteUser(String id) {
-        if (UserRepository.existsById(id))
-            UserRepository.deleteById(id);
-        else
-            throw new NotFoundException("user not found");
+    public void deleteUser(String id,String token) {
+        String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        Users userFromDB = this.UserRepository.findById(id).orElse(null);
+        if (userFromDB == null) {
+            throw new NotFoundException("user is not found");
+        }
+        String companyOfCategory = userFromDB.getCompanyId().getId();
+        Roles wholeRole = rolesRepository.findById(role).orElse(null);
+        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
+            throw new NoPermissionException("You do not have permission to update user");
+        }
+        UserRepository.deleteById(id);
     }
 
     @SneakyThrows
-    public Users updateUser(Users user) {
-        if (UserRepository.existsById(user.getId()))
-            return UserRepository.save(user);
-        else
-            throw new NotFoundException("user not found");
+    public Users updateUser(Users user, String token) throws NoPermissionException {
+        String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        Users userFromDB = this.UserRepository.findById(user.getId()).orElse(null);
+        if (userFromDB == null) {
+            throw new NotFoundException("user is not found");
+        }
+        String companyOfCategory = userFromDB.getCompanyId().getId();
+        Roles wholeRole = rolesRepository.findById(role).orElse(null);
+        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
+            throw new NoPermissionException("You do not have permission to update user");
+        }
+        return UserRepository.save(user);
     }
 
     @SneakyThrows
-    public HashMap<String, String> getCustomerByNames(String prefix) {
-
-        //company and role will be taken from token
-        List<Users> users = UserRepository.findByFullNameContainingAndCompanyIdAndRoleId(prefix, "1", "1");
+    public HashMap<String, String> getCustomerByNames(String prefix,String token) {
+        String roleId= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
+        String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<Users> users = UserRepository.findByFullNameContainingAndCompanyIdAndRoleId(prefix, companyId, roleId);
         HashMap<String, String> userMap = new HashMap<>();
         for (Users user : users) {
             userMap.put(user.getId(), user.getFullName());
@@ -109,7 +126,7 @@ public class UsersService  {
     }
 
     @SneakyThrows
-    public List<UserDTO> getUsers(int pageNumber) {
+    public List<UserDTO> getUsers(int pageNumber,String token) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         String roleId= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
@@ -138,7 +155,7 @@ public class UsersService  {
         AuditData auditData = new AuditData();
         auditData.setCreateDate(LocalDateTime.now());
         auditData.setUpdateDate(LocalDateTime.now());
-      //  user.setAuditData(auditData);
+        user.setAuditData(auditData);
         if (companyRepository.existsByName(companyName)){
             throw new ObjectAlreadyExistException("company already exists");
         }
