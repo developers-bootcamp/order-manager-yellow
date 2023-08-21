@@ -7,6 +7,7 @@ import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
+import com.yellow.ordermanageryellow.security.PasswordValidator;
 import lombok.SneakyThrows;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
@@ -110,8 +111,9 @@ public class UsersService  {
     @SneakyThrows
     public List<UserDTO> getUsers(int pageNumber) {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        //company and role will be taken from token
-        Page<Users> users = UserRepository.findAllByCompanyIdAndRoleId("1", "1", pageable);
+        String roleId= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
+        String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        Page<Users> users = UserRepository.findAllByCompanyId(companyId,pageable);
         return users.map(userMapper::usersToUserDTO).getContent();
     }
     @SneakyThrows
@@ -119,7 +121,7 @@ public class UsersService  {
 
         Users user=new Users();
         user.setFullName(fullName);
-        if(password.equals("")){
+        if(PasswordValidator.isValidPassword(password)){
             throw new NotValidStatusExeption("password not  valid");
         }
         user.setPassword(password);
