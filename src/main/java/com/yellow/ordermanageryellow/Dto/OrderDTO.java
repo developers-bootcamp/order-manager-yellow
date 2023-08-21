@@ -18,7 +18,7 @@ public class OrderDTO {
     private int paymentAmount;
     private Orders.status orderStatusId;
     private long creditCardNumber;
-   // private LocalDate expiryOn;
+    private LocalDate expiryOn;
     private String cvc;
 
     private PaymentType paymentType;

@@ -40,7 +40,7 @@ public class RabbitMQConfig {
     public MessageConverter converter(){
 //        System.out.println("Updating spring's object mapper.");
 //
-//        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
+        ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         return new Jackson2JsonMessageConverter();
     }
     @Bean

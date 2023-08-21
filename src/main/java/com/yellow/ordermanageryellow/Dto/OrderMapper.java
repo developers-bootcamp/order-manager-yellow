@@ -15,7 +15,7 @@ public interface OrderMapper {
     @Mapping(target = "paymentAmount", source = "totalAmount")
     @Mapping(target = "orderStatusId", source = "orderStatusId")
     @Mapping(target = "creditCardNumber", source = "creditCardNumber")
-    // @Mapping(target = "expiryOn", source = "expiryOn")
+    @Mapping(target = "expiryOn", source = "expiryOn")
     @Mapping(target = "cvc", source = "cvc")
     OrderDTO orderToOrderDTO(Orders order);
 }
