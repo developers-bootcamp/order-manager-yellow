@@ -1,6 +1,7 @@
 package com.yellow.ordermanageryellow.service;
 
 import com.yellow.ordermanageryellow.Dao.OrdersRepository;
+import com.yellow.ordermanageryellow.Dao.ProductRepository;
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.model.Order_Items;
@@ -12,21 +13,28 @@ import org.springframework.stereotype.Service;
 public class ChargingService {
     @Autowired
     private OrdersRepository ordersRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
     private RabbitMQProducer rabbitMQProducer;
 
     public void chargingStep(Orders order) {
+        Orders orderFromMongo=ordersRepository.findById(order.getId()).orElse(null);
         try{
-            order.setOrderStatusId(Orders.status.charging);
-            for (Order_Items item:order.getOrderItems())
+            orderFromMongo.setOrderStatusId(Orders.status.charging);
+            for (Order_Items item:orderFromMongo.getOrderItems())
             {
-                if(item.getProductId().getInventory()<item.getQuantity())
-                    order.setOrderStatusId(Orders.status.cancelled);
+                if(item.getProductId().getInventory()<item.getQuantity()){
+                    orderFromMongo.setOrderStatusId(Orders.status.cancelled);
+                    ordersRepository.save(orderFromMongo);
+                break;}
                 else{
                     item.getProductId().setInventory((int)(item.getProductId().getInventory()-item.getQuantity()));
-                    OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(order);
-                    rabbitMQProducer.sendMessage(orderDTO);}
+                    OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(orderFromMongo);
+                    rabbitMQProducer.sendMessage(orderDTO);
+                    productRepository.save(item.getProductId());}
             }
-            ordersRepository.save(order);
+
         }
         catch (Exception e) {
             throw new RuntimeException(e);
@@ -34,7 +42,7 @@ public class ChargingService {
 
     }
     public void CompletedPayment(OrderDTO orderDTO) {
-        Orders order =ordersRepository.findById(orderDTO.getOrderId()).orElse(null);
+        Orders order=ordersRepository.findById(orderDTO.getOrderId()).orElse(null);
         if(order.getOrderStatusId().equals(Orders.status.approved))
             order.setOrderStatusId(Orders.status.packing);
         else {

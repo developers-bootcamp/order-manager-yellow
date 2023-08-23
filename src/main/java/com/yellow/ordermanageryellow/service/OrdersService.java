@@ -38,6 +38,7 @@ public class OrdersService {
     private JwtToken jwtToken;
     @Autowired
     private ProductRepository productRepository;
+    @Autowired
     private ChargingService chargingService=new ChargingService();
 
     @Value("${pageSize}")
@@ -60,8 +61,8 @@ public class OrdersService {
                 throw new NotValidStatusExeption("Order should be in status new or approve");
             }
             Orders order = ordersRepository.insert(newOrder);
-         /* if(newOrder.getOrderStatusId() == status.approved)
-            chargingService.chargingStep(order);*/
+         if(newOrder.getOrderStatusId() == status.approved)
+            chargingService.chargingStep(order);
             return order.getId();
         }
 
