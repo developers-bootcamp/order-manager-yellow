@@ -1,12 +1,10 @@
-package com.yellow.ordermanageryellow.Service;
+package com.yellow.ordermanageryellow.service;
 
-
-import com.yellow.ordermanageryellow.service.ProductMapper;
-import com.yellow.ordermanageryellow.dao.ProductRepository;
+import com.yellow.ordermanageryellow.Dao.ProductRepository;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
 import com.yellow.ordermanageryellow.Dto.ProductNameDTO;
 import com.yellow.ordermanageryellow.Exception.ObjectAllReadyExists;
-import com.yellow.ordermanageryellow.dao.RolesRepository;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
@@ -36,7 +34,7 @@ public class ProductService {
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if(!wholeRole.getName().equals(RoleNames.ADMIN))
+        if(!wholeRole.getName().equals(RoleName.ADMIN))
             throw new NoPermissionException("You do not have permission to delete product category");
         if (this.productRepository.existsByName(product.getName()))
             throw new ObjectAlreadyExistException("category name already exist");
@@ -63,12 +61,12 @@ public class ProductService {
             throw new NoSuchElementException("product doesn't exist");
         String companyOfProduct = productOptional.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if(!wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfProduct))
+        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfProduct))
             throw new NoPermissionException("You do not have permission to update product");
         if (!productOptional.getName().equals(product.getName()) && productRepository.existsByName(product.getName()))
             throw new ObjectAllReadyExists("You need a unique name for product");
         product.getAuditData().setUpdateDate(LocalDateTime.now());
-       return productRepository.save(product);
+        return productRepository.save(product);
     }
     public void deleteProduct(String id, String token) {
 
@@ -79,9 +77,9 @@ public class ProductService {
             throw new NoSuchElementException("category is not found");
         }
         String companyOfCategory = "7";
-                //ProductFromDb.getCompanyId().getId();
+        //ProductFromDb.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if( !wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory))
+        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory))
             throw new NoPermissionException("You do not have permission to delete product category");
         this.productRepository.deleteById(id);
     }
@@ -95,3 +93,4 @@ public class ProductService {
     }
 
 }
+

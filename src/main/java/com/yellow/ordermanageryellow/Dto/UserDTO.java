@@ -1,4 +1,4 @@
-package com.yellow.ordermanageryellow.DTO;
+package com.yellow.ordermanageryellow.Dto;
 
 import com.yellow.ordermanageryellow.model.Address;
 import lombok.*;
@@ -14,6 +14,7 @@ public class UserDTO {
     private String address;
     private String email;
     private String telephone;
+    private String role;
 
 
 

@@ -1,20 +1,21 @@
 package com.yellow.ordermanageryellow.service;
-import com.yellow.ordermanageryellow.dao.CompanyRepository;
-import com.yellow.ordermanageryellow.dao.RolesRepository;
-import com.yellow.ordermanageryellow.DTO.UserDTO;
-import com.yellow.ordermanageryellow.DTO.UserMapper;
-import com.yellow.ordermanageryellow.dao.RolesRepository;
-import com.yellow.ordermanageryellow.dao.UserRepository;
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
+import com.yellow.ordermanageryellow.Dto.UserDTO;
+import com.yellow.ordermanageryellow.Dto.UserMapper;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
+import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
+//import com.yellow.ordermanageryellow.security.PasswordValidator;
 import lombok.SneakyThrows;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
 import com.yellow.ordermanageryellow.exception.WrongPasswordException;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.model.ProductCategory;
-import com.yellow.ordermanageryellow.model.RoleNames;
+import com.yellow.ordermanageryellow.model.RoleName;
 import com.yellow.ordermanageryellow.model.Roles;
 import com.yellow.ordermanageryellow.model.Users;
 import com.yellow.ordermanageryellow.security.EncryptedData;
@@ -56,7 +57,7 @@ public class UsersService  {
 
     @SneakyThrows
     public String login(String email, String password) {
-        Users user = UserRepository.findUserByEmail(email);
+        Users user = UserRepository.findByAddressEmail(email);
         if (user == null)
             throw new NotFoundException("user not exist");
         else if (!user.getPassword().equals(password))
@@ -66,24 +67,15 @@ public class UsersService  {
 
 
     @SneakyThrows
-    public Users createNewUser(Users newUser,String token) {
+    public Users createNewUser(Users newUser) {
         if (!findUser(newUser)) {
             return UserRepository.save(newUser);
         } else
             throw new ObjectExistException("user is already exist");
     }
 
-//    public String generateToken(Users user) {
-//        return user.getCompanyId() + "&" + user.getId() + "&" + user.getRoleId();
-//    }
-
-//    public String[] getToken(String token) {
-//        String[] tokenS = token.split("&");
-//        return tokenS;
-//    }
-
     public boolean findUser(Users user) {
-        Users foundUser = UserRepository.findUserByEmail(user.getAddress().getEmail());
+        Users foundUser = UserRepository.findByAddressEmail(user.getAddress().getEmail());
         if (foundUser == null)
             return false;
         return true;
@@ -99,7 +91,7 @@ public class UsersService  {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if(!wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory)){
+        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
         UserRepository.deleteById(id);
@@ -115,7 +107,7 @@ public class UsersService  {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if( !wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory)){
+        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
         return UserRepository.save(user);
@@ -143,18 +135,18 @@ public class UsersService  {
 =======
         String roleId= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
-        Page<Users> users = UserRepository.findAllByCompanyIdAndRoleId(companyId, roleId, pageable);
+        Page<Users> users = UserRepository.findAllByCompanyId(companyId,pageable);
         return users.map(userMapper::usersToUserDTO).getContent();
 >>>>>>> main:src/main/java/com/yellow/ordermanageryellow/service/UsersService.java
     }
     @SneakyThrows
-    public Users signUp(String fullName,String companyName,String email,String password){
+    public Users signUp(String fullName,String companyName,String email,String password,Currency currency){
 
         Users user=new Users();
         user.setFullName(fullName);
-        if(password.equals("")){
-            throw new NotValidStatusExeption("password not  valid");
-        }
+//        if(PasswordValidator.isValidPassword(password)){
+//            throw new NotValidStatusExeption("password not  valid");
+//        }
         user.setPassword(password);
         if(!email.contains("@")){
             throw new NotValidStatusExeption("email not valid");
@@ -180,6 +172,7 @@ public class UsersService  {
         auditData1.setCreateDate(LocalDateTime.now());
         auditData1.setUpdateDate(LocalDateTime.now());
         company.setAuditData(auditData1);
+        company.setCurrency(currency);
         user.setCompanyId(company);
         userRepository.save(user);
         return user;

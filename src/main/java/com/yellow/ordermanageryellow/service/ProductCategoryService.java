@@ -1,11 +1,11 @@
-package com.yellow.ordermanageryellow.Service;
+package com.yellow.ordermanageryellow.service;
 
-import com.yellow.ordermanageryellow.dao.CompanyRepository;
-import com.yellow.ordermanageryellow.dao.RolesRepository;
-import com.yellow.ordermanageryellow.dao.UserRepository;
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
+import com.yellow.ordermanageryellow.Dao.RolesRepository;
+import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
-import com.yellow.ordermanageryellow.dao.ProductCategoryRepository;
+import com.yellow.ordermanageryellow.Dao.ProductCategoryRepository;
 import com.yellow.ordermanageryellow.model.*;
 import com.yellow.ordermanageryellow.security.EncryptedData;
 import com.yellow.ordermanageryellow.security.JwtToken;
@@ -42,7 +42,7 @@ public class ProductCategoryService {
         String role = this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if (wholeRole == null || !RoleNames.ADMIN.equals(wholeRole.getName()))
+        if (wholeRole == null || !RoleName.ADMIN.equals(wholeRole.getName()))
             throw new NoPermissionException("You do not have permission to delete product category");
         if (this.productCategoryRepository.existsByname(newCategory.getName()))
             throw new ObjectAlreadyExistException("category name already exist");
@@ -63,7 +63,7 @@ public class ProductCategoryService {
         }
         String companyOfCategory = categoryFromDb.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if (!wholeRole.getName().equals(RoleNames.ADMIN) || !company.equals(companyOfCategory))
+        if (!wholeRole.getName().equals(RoleName.ADMIN) || !company.equals(companyOfCategory))
             throw new NoPermissionException("You do not have permission to delete product category");
         this.productCategoryRepository.deleteById(categoryId);
     }
@@ -78,7 +78,7 @@ public class ProductCategoryService {
         }
         String companyOfCategory = categoryFromDb.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if (!wholeRole.getName().equals(RoleNames.ADMIN) || company != null && !company.equals(companyOfCategory))
+        if (!wholeRole.getName().equals(RoleName.ADMIN) || company != null && !company.equals(companyOfCategory))
             throw new NoPermissionException("You do not have permission to update product category");
         updatedCategory.setAuditData(new AuditData(categoryFromDb.getAuditData().getCreateDate(), LocalDateTime.now()));
         return this.productCategoryRepository.save(updatedCategory);
@@ -87,9 +87,9 @@ public class ProductCategoryService {
     //This function has to be deleted, Just for trying the token
     public String fill() {
         AuditData d = new AuditData(LocalDateTime.now(), LocalDateTime.now());
-        Company c = new Company("7", "AAAAAAAAA", "55", d);
+        Company c = new Company("7", "AAAAAAAAA", Currency.EURO, d);
         companyRepository.save(c);
-        Roles roles = new Roles("2", RoleNames.ADMIN, "cust", d);
+        Roles roles = new Roles("2", RoleName.ADMIN, "cust", d);
         rolesRepository.save(roles);
         Address a = new Address("3", "058", "Sadigura", "@");
         Users user = new Users("100", "Shlomo", "1000", a, roles, c, d);

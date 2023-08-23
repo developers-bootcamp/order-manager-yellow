@@ -1,6 +1,6 @@
 package com.yellow.ordermanageryellow.controller;
 
-import com.yellow.ordermanageryellow.Service.OrdersService;
+import com.yellow.ordermanageryellow.service.OrdersService;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 
@@ -24,18 +25,10 @@ public class OrderController {
     public OrderController(OrdersService orderservice) {
         this.orderservice = orderservice;
     }
-    @GetMapping("/{id}")
-    public ResponseEntity getOrderById( @PathVariable String id) {
-        try {
-            Orders order = orderservice.getOrderById(id);
-            return ResponseEntity.ok(order);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
-    }
+
 
     @GetMapping("/{userId}/{status}/{pageNumber}")
-    public ResponseEntity getOrders(@RequestHeader("Authorization") String token, @PathVariable String userId, @PathVariable String status, @PathVariable int pageNumber) {
+    public ResponseEntity getOrders(@RequestHeader String token, @PathVariable String userId, @PathVariable Orders.status status, @PathVariable int pageNumber) {
         try {
             List<Orders> orders = orderservice.getOrders(token, userId, status, pageNumber);
             return ResponseEntity.ok(orders);

@@ -2,7 +2,7 @@ package com.yellow.ordermanageryellow.controller;
 
 import com.yellow.ordermanageryellow.Exception.ObjectAllReadyExists;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
-import com.yellow.ordermanageryellow.Service.ProductService;
+import com.yellow.ordermanageryellow.service.ProductService;
 import com.yellow.ordermanageryellow.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +21,7 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity addProduct(@RequestBody Product product, @RequestHeader("Authorization") String token)  {
-      Product createdProduct;
+        Product createdProduct;
         try{
             createdProduct=   productService.addProduct(product,token);
             return new ResponseEntity<>(createdProduct, HttpStatus.OK);
