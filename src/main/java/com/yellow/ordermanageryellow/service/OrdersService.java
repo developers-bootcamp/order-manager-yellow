@@ -39,7 +39,6 @@ public class OrdersService {
 
     @Value("${pageSize}")
     private int pageSize;
-
     public Orders getOrderById(String id){
         return ordersRepository.findById(id).get();
     }
@@ -54,7 +53,7 @@ public class OrdersService {
     }
 
     public String insert(Orders newOrder) {
-        if (newOrder.getOrderStatusId() != status.New || newOrder.getOrderStatusId() != status.approved) {
+        if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("Order should be in status new or approve");
         }
         Orders order = ordersRepository.insert(newOrder);
@@ -62,7 +61,7 @@ public class OrdersService {
     }
 
     public boolean edit(Orders currencyOrder) {
-        if (currencyOrder.getOrderStatusId() != status.cancelled || currencyOrder.getOrderStatusId() != status.approved) {
+        if (currencyOrder.getOrderStatusId() != status.cancelled && currencyOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("You can only approve or cancel an order");
         }
         Optional<Orders> order = ordersRepository.findById(currencyOrder.getId());
