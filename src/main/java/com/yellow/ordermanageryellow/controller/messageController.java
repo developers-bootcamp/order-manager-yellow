@@ -1,8 +1,9 @@
 package com.yellow.ordermanageryellow.controller;
 
+import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Try;
-import com.yellow.ordermanageryellow.publisher.RabbitMQProducer;
+import com.yellow.ordermanageryellow.service.RabbitMQProducer;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,7 @@ public class messageController {
         this.p = p;
     }
     @PostMapping("/publish")
-    public ResponseEntity<String> sendMessage(@RequestBody Orders message){
+    public ResponseEntity<String> sendMessage(@RequestBody OrderDTO message){
         p.sendMessage(message);
         return ResponseEntity.ok("!!!!");
     }

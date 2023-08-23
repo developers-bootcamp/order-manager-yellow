@@ -2,13 +2,10 @@ package com.yellow.ordermanageryellow.service;
 
 import com.yellow.ordermanageryellow.Dao.OrdersRepository;
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
+import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
-//import com.yellow.ordermanageryellow.model.Discount;
-import com.yellow.ordermanageryellow.mapper.OrderMapper;
-import com.yellow.ordermanageryellow.model.Order_Items;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Orders.status;
-import com.yellow.ordermanageryellow.model.Product;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,7 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 import java.util.*;
 

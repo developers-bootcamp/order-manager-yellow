@@ -1,4 +1,4 @@
-package com.yellow.ordermanageryellow.mapper;
+package com.yellow.ordermanageryellow.Dto;
 
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.model.Orders;
