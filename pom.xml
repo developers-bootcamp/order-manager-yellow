@@ -68,12 +68,11 @@
 			<version>1.5.3.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>5.0.11.RELEASE</version>
 		</dependency>
-
 		<!-- Other dependencies... -->
-
 	</dependencies>
 
 	<build>
@@ -145,6 +144,7 @@
 					</compilerArgs>
 				</configuration>
 			</plugin>
+
 		</plugins>
 
 
