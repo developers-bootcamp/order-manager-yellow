@@ -36,6 +36,7 @@ public class OrdersService {
     private JwtToken jwtToken;
     @Autowired
     private ProductRepository productRepository;
+    private ChargingService chargingService=new ChargingService();
 
     @Value("${pageSize}")
     private int pageSize;
@@ -56,7 +57,10 @@ public class OrdersService {
         if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
             throw new NotValidStatusExeption("Order should be in status new or approve");
         }
+
         Orders order = ordersRepository.insert(newOrder);
+       /* if(newOrder.getOrderStatusId() == status.approved)
+            chargingService.chargingStep(order);*/
         return order.getId();
     }
 
@@ -71,6 +75,8 @@ public class OrdersService {
         if (order.get().getOrderStatusId() != status.New || order.get().getOrderStatusId() != status.packing) {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
+        if(order.get().getOrderStatusId() == status.approved)
+            chargingService.chargingStep(order.get());
        ordersRepository.save(currencyOrder);
         return true;
     }
