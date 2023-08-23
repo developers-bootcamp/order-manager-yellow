@@ -14,7 +14,6 @@ import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
 import com.yellow.ordermanageryellow.exception.WrongPasswordException;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
-import com.yellow.ordermanageryellow.model.ProductCategory;
 import com.yellow.ordermanageryellow.model.RoleNames;
 import com.yellow.ordermanageryellow.model.Roles;
 import com.yellow.ordermanageryellow.model.Users;
