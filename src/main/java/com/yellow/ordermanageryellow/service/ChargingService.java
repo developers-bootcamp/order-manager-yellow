@@ -27,14 +27,15 @@ public class ChargingService {
                 if(item.getProductId().getInventory()<item.getQuantity()){
                     orderFromMongo.setOrderStatusId(Orders.status.cancelled);
                     ordersRepository.save(orderFromMongo);
-                break;}
-                else{
+                    return;
+                }
+                 else{
                     item.getProductId().setInventory((int)(item.getProductId().getInventory()-item.getQuantity()));
-                    OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(orderFromMongo);
-                    rabbitMQProducer.sendMessage(orderDTO);
-                    productRepository.save(item.getProductId());}
+                     productRepository.save(item.getProductId());
+                 }
             }
-
+            OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(orderFromMongo);
+            rabbitMQProducer.sendMessage(orderDTO);
         }
         catch (Exception e) {
             throw new RuntimeException(e);
