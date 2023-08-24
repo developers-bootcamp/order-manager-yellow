@@ -9,14 +9,14 @@ import com.yellow.ordermanageryellow.Dto.UserMapper;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.service.UsersService;
 import com.yellow.ordermanageryellow.model.Users;
-import com.yellow.ordermanageryellow.exception.NotFoundException;
-import com.yellow.ordermanageryellow.exception.ObjectExistException;
+import com.yellow.ordermanageryellow.Exception.NotFoundException;
+import com.yellow.ordermanageryellow.Exception.ObjectExistException;
 import com.yellow.ordermanageryellow.model.Users;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.yellow.ordermanageryellow.exception.WrongPasswordException;
+import com.yellow.ordermanageryellow.Exception.WrongPasswordException;
 import java.util.HashMap;
 import java.util.List;
 
