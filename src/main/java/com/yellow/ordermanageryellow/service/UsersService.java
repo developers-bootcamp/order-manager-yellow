@@ -7,11 +7,14 @@ import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
+//import com.yellow.ordermanageryellow.security.PasswordValidator;
 import lombok.SneakyThrows;
 import com.yellow.ordermanageryellow.exception.NotFoundException;
 import com.yellow.ordermanageryellow.exception.ObjectExistException;
 import com.yellow.ordermanageryellow.exception.WrongPasswordException;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
+import com.yellow.ordermanageryellow.model.ProductCategory;
+import com.yellow.ordermanageryellow.model.RoleName;
 import com.yellow.ordermanageryellow.model.RoleNames;
 import com.yellow.ordermanageryellow.model.Roles;
 import com.yellow.ordermanageryellow.model.Users;
@@ -62,7 +65,7 @@ public class UsersService  {
         }
     }
     @SneakyThrows
-    public Users createNewUser(Users newUser,String token) {
+    public Users createNewUser(Users newUser) {
         if (!findUser(newUser)) {
             return UserRepository.save(newUser);
         } else
@@ -86,7 +89,7 @@ public class UsersService  {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if(!wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory)){
+        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
         UserRepository.deleteById(id);
@@ -102,7 +105,7 @@ public class UsersService  {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if( !wholeRole.getName().equals(RoleNames.ADMIN)|| !company.equals(companyOfCategory)){
+        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
         return UserRepository.save(user);
@@ -125,11 +128,11 @@ public class UsersService  {
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
         String roleId= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
-        Page<Users> users = UserRepository.findAllByCompanyIdAndRoleId(companyId, roleId, pageable);
+        Page<Users> users = UserRepository.findAllByCompanyId(companyId,pageable);
         return users.map(userMapper::usersToUserDTO).getContent();
     }
     @SneakyThrows
-    public Users signUp(String fullName,String companyName,String email,String password){
+    public Users signUp(String fullName,String companyName,String email,String password,Currency currency){
 
         Users user=new Users();
         user.setFullName(fullName);
@@ -162,6 +165,7 @@ public class UsersService  {
         auditData1.setCreateDate(LocalDateTime.now());
         auditData1.setUpdateDate(LocalDateTime.now());
         company.setAuditData(auditData1);
+        company.setCurrency(currency);
         user.setCompanyId(company);
         userRepository.save(user);
         return user;
