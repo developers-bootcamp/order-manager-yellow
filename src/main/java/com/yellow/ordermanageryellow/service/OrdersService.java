@@ -1,5 +1,6 @@
 package com.yellow.ordermanageryellow.service;
 
+import com.mongodb.client.MongoCollection;
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
@@ -18,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import com.yellow.ordermanageryellow.security.EncryptedData;
 import com.yellow.ordermanageryellow.security.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -41,31 +45,37 @@ public class OrdersService {
     @Autowired
     private ChargingService chargingService=new ChargingService();
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     @Value("${pageSize}")
     private int pageSize;
     public Orders getOrderById(String id){
         return ordersRepository.findById(id).get();
     }
 
-    public List<Orders> getOrders(String token, List <String> orderStatusId, int pageNumber) {
-        System.out.print("getOrders");
-        System.out.print(token);
-        System.out.print(orderStatusId);
-        System.out.print(pageNumber);
-        String companyId= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
-        //Sort.Order sortOrder = Sort.Order.asc("auditData.updateDate");
-        //String companyId="64dbb3f095f36c150987e7e0";
-        //  Sort sort = Sort.by(sortOrder);
-        Pageable pageable = PageRequest.of(pageNumber, pageSize/* pageSize parameter omitted */);
-        // Pageable pageable = PageRequest.of(pageNumber, pageSize/* pageSize parameter omitted */, sort);
-        try {
-            List<Orders> pageOrders = ordersRepository.findByOrderStatusIdInAndCompanyId( pageable, orderStatusId,companyId);
-            System.out.print(pageOrders);
-            return pageOrders;
-        }catch (Exception err){
-            System.out.print("stop");
+    public List<Orders> getOrders(String token,  boolean isCanceled, int pageNumber,  String sortBy,Map<String,Object>filters) {
+        String companyId = jwtToken.decryptToken(token,EncryptedData.COMPANY);
+        Pageable paging;
+        if (sortBy != "") {
+            Sort sort = Sort.by(sortBy).ascending();
+            paging = PageRequest.of(pageNumber, pageSize, sort);
+        } else {
+            paging = PageRequest.of(pageNumber, pageSize);
         }
-        return null;
+        Criteria criteria = Criteria.where("companyId.id").is(companyId);
+        if(isCanceled){
+            criteria.and("orderStatusId").is("cancelled");
+        }
+        else{
+            criteria.and("orderStatusId").in("approved","charging","packing","New");
+        }
+        filters.forEach((key, val) -> {
+            criteria.and(key).is(val);
+        });
+        Query query = new Query(criteria);
+        query.with(paging);
+        return mongoTemplate.find(query, Orders.class);
     }
 
        public String insert(Orders newOrder) {
