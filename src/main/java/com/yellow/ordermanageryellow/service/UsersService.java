@@ -220,20 +220,4 @@ public class UsersService {
         return user;
     }
 
-    public Users createUser(UserDTO u) {
-        Address address = new Address();
-        address.setAddress(u.getAddress());
-        address.setEmail(u.getEmail());
-        address.setTelephone(u.getTelephone());
-
-        Users user = new Users();
-        user.setId(u.getId());
-        user.setFullName(u.getFullName());
-        user.setPassword(u.getPassword());
-        user.setAddress(address);
-
-        Roles userRole = rolesRepository.getByName(RoleName.valueOf(u.getRole()));
-        user.setRoleId(userRole);
-        return user;
-    }
 }
