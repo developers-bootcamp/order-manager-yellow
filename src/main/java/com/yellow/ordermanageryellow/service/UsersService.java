@@ -9,6 +9,7 @@ import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
 //import com.yellow.ordermanageryellow.security.PasswordValidator;
+import com.yellow.ordermanageryellow.model.Currency;
 import lombok.SneakyThrows;
 import com.yellow.ordermanageryellow.Exception.NotFoundException;
 import com.yellow.ordermanageryellow.Exception.ObjectExistException;
@@ -160,7 +161,7 @@ public class UsersService {
     }
 
     @SneakyThrows
-    public Users signUp(String fullName, String companyName, String email, String password,Currency currency) {
+    public Users signUp(String fullName, String companyName, String email, String password, Currency currency) {
 
         Users user = new Users();
         user.setFullName(fullName);
