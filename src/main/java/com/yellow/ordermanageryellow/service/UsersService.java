@@ -4,30 +4,31 @@ import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dto.UserDTO;
 import com.yellow.ordermanageryellow.Dto.UserMapper;
-import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.Dao.UserRepository;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
 import com.yellow.ordermanageryellow.model.*;
+//import com.yellow.ordermanageryellow.security.PasswordValidator;
 import lombok.SneakyThrows;
-import com.yellow.ordermanageryellow.exception.NotFoundException;
-import com.yellow.ordermanageryellow.exception.ObjectExistException;
-import com.yellow.ordermanageryellow.exception.WrongPasswordException;
+import com.yellow.ordermanageryellow.Exception.NotFoundException;
+import com.yellow.ordermanageryellow.Exception.ObjectExistException;
+import com.yellow.ordermanageryellow.Exception.WrongPasswordException;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.model.ProductCategory;
-import com.yellow.ordermanageryellow.model.RoleNames;
+import com.yellow.ordermanageryellow.model.RoleName;
 import com.yellow.ordermanageryellow.model.Roles;
 import com.yellow.ordermanageryellow.model.Users;
 import com.yellow.ordermanageryellow.security.EncryptedData;
 import com.yellow.ordermanageryellow.security.JwtToken;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import java.util.HashMap;
+import java.util.List;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,33 +44,33 @@ public class UsersService {
     @Autowired
     private UserRepository UserRepository;
     @Autowired
-    private UserMapper userMapper;
-
+    private  UserMapper userMapper;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Value("${pageSize}")
     private int pageSize;
 
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private CompanyRepository companyRepository;
-
+    private  CompanyRepository companyRepository;
+    public UsersService() {
+        this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    }
 
     @SneakyThrows
     public Map<String, Object> login(String email, String password) {
         Users user = UserRepository.findByAddressEmail(email);
         if (user == null)
             throw new NotFoundException("user not exist");
-        else if (!user.getPassword().equals(password))
-            throw new WrongPasswordException("invalid password");
-        else {
-            Map<String, Object> result = new HashMap<>();
+        if (bCryptPasswordEncoder.matches(password,user.getPassword())) {
+              Map<String, Object> result = new HashMap<>();
             result.put("token", this.jwtToken.generateToken(user));
             result.put("role", user.getRoleId().getName());
             return result;
+        } else {
+            throw new WrongPasswordException("invalid password");
         }
     }
-
-
     @SneakyThrows
     public Users createNewUser(UserDTO newUser, String token) {
         Users user = createUser(newUser);
@@ -99,7 +100,7 @@ public class UsersService {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if (!wholeRole.getName().equals(RoleNames.ADMIN) || !company.equals(companyOfCategory)) {
+        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
         UserRepository.deleteById(id);
@@ -119,7 +120,7 @@ public class UsersService {
         user.setCompanyId(userFromDB.getCompanyId());
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if (!wholeRole.getName().equals(RoleNames.ADMIN)) {
+        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
             throw new NoPermissionException("You do not have permission to update user");
         }
         return UserRepository.save(user);
@@ -159,15 +160,16 @@ public class UsersService {
     }
 
     @SneakyThrows
-    public Users signUp(String fullName, String companyName, String email, String password) {
+    public Users signUp(String fullName, String companyName, String email, String password,Currency currency) {
 
         Users user = new Users();
         user.setFullName(fullName);
-        if (password.equals("")) {
-            throw new NotValidStatusExeption("password not  valid");
+        if(password.equals(" ")){
+            throw new NotValidStatusExeption("password not valid");
         }
-        user.setPassword(password);
-        if (!email.contains("@")) {
+        String hashedPassword = bCryptPasswordEncoder.encode(password);
+        user.setPassword(hashedPassword);
+        if(!email.contains("@")){
             throw new NotValidStatusExeption("email not valid");
         }
         if (userRepository.existsByAddressEmail(email)) {
@@ -191,6 +193,7 @@ public class UsersService {
         auditData1.setCreateDate(LocalDateTime.now());
         auditData1.setUpdateDate(LocalDateTime.now());
         company.setAuditData(auditData1);
+        company.setCurrency(currency);
         user.setCompanyId(company);
         userRepository.save(user);
         return user;
