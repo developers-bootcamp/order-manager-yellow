@@ -6,6 +6,7 @@ import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.model.Order_Items;
 import com.yellow.ordermanageryellow.model.Orders;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,14 +43,15 @@ public class ChargingService {
         }
 
     }
-    public void CompletedPayment(OrderDTO orderDTO) {
+    public void CompletedPayment(@NotNull OrderDTO orderDTO) {
         Orders order=ordersRepository.findById(orderDTO.getOrderId()).orElse(null);
-        if(order.getOrderStatusId().equals(Orders.status.approved))
+        if(orderDTO.getOrderStatusId()==Orders.status.charging)
             order.setOrderStatusId(Orders.status.packing);
         else {
             order.setOrderStatusId(Orders.status.cancelled);
-            for (Order_Items item:order.getOrderItems())
+            for (Order_Items item:order.getOrderItems()){
                 item.getProductId().setInventory((int)(item.getProductId().getInventory()+item.getQuantity()));
+                 productRepository.save(item.getProductId());}
         }
         ordersRepository.save(order);
     }
