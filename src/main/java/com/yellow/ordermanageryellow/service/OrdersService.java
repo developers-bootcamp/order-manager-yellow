@@ -1,5 +1,6 @@
 package com.yellow.ordermanageryellow.service;
 
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.Dao.CompanyRepository;
@@ -74,15 +75,15 @@ public class OrdersService {
         return null;
     }
 
-       public String insert(Orders newOrder) {
-            if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
-                throw new NotValidStatusExeption("Order should be in status new or approve");
-            }
-            Orders order = ordersRepository.insert(newOrder);
-         if(newOrder.getOrderStatusId() == status.approved)
-            chargingService.chargingStep(order);
-            return order.getId();
+    public String insert(Orders newOrder) {
+        if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
+            throw new NotValidStatusExeption("Order should be in status new or approve");
         }
+        Orders order = ordersRepository.insert(newOrder);
+        if(newOrder.getOrderStatusId() == status.approved)
+            chargingService.chargingStep(order);
+        return order.getId();
+    }
 
     public boolean edit(Orders currencyOrder) {
         if (currencyOrder.getOrderStatusId() != status.cancelled && currencyOrder.getOrderStatusId() != status.approved) {
@@ -97,16 +98,18 @@ public class OrdersService {
         }
         if(order.get().getOrderStatusId() == status.approved)
             chargingService.chargingStep(order.get());
-       ordersRepository.save(currencyOrder);
+        ordersRepository.save(currencyOrder);
         return true;
     }
     public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order) {
         HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
         double total = 0;
         String currencyOfOrder = order.getCurrency().toString();
+
          String currencyOfCompany="DOLLAR";
         // if(order.getOrderItems()!=null)
              //currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
+
         System.out.println("currencyOfOrder"+currencyOfCompany);
         for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
             Order_Items orderItem = order.getOrderItems().get(i);
