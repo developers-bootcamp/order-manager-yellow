@@ -3,6 +3,9 @@ package com.yellow.ordermanageryellow.service;
 import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.Dto.OrderMapper;
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
+import com.yellow.ordermanageryellow.Dto.OrderDTO;
+import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
 import com.yellow.ordermanageryellow.Dao.OrdersRepository;
 import com.yellow.ordermanageryellow.Dao.ProductRepository;
@@ -102,9 +105,11 @@ public class OrdersService {
         HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
         double total = 0;
         String currencyOfOrder = order.getCurrency().toString();
-        String currencyOfCompany="DOLLAR";
+
+         String currencyOfCompany="DOLLAR";
         // if(order.getOrderItems()!=null)
-        //currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
+             //currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
+
         System.out.println("currencyOfOrder"+currencyOfCompany);
         for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
             Order_Items orderItem = order.getOrderItems().get(i);
