@@ -20,25 +20,22 @@ public class ChargingService {
     private RabbitMQProducer rabbitMQProducer;
 
     public void chargingStep(Orders order) {
-        Orders orderFromMongo=ordersRepository.findById(order.getId()).orElse(null);
-        try{
+        Orders orderFromMongo = ordersRepository.findById(order.getId()).orElse(null);
+        try {
             orderFromMongo.setOrderStatusId(Orders.status.charging);
-            for (Order_Items item:orderFromMongo.getOrderItems())
-            {
-                if(item.getProductId().getInventory()<item.getQuantity()){
+            for (Order_Items item : orderFromMongo.getOrderItems()) {
+                if (item.getProductId().getInventory() < item.getQuantity()) {
                     orderFromMongo.setOrderStatusId(Orders.status.cancelled);
                     ordersRepository.save(orderFromMongo);
                     return;
+                } else {
+                    item.getProductId().setInventory((int) (item.getProductId().getInventory() - item.getQuantity()));
+                    productRepository.save(item.getProductId());
                 }
-                 else{
-                    item.getProductId().setInventory((int)(item.getProductId().getInventory()-item.getQuantity()));
-                     productRepository.save(item.getProductId());
-                 }
             }
             OrderDTO orderDTO = OrderMapper.INSTANCE.orderToOrderDTO(orderFromMongo);
             rabbitMQProducer.sendMessage(orderDTO);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -52,7 +49,7 @@ public class ChargingService {
             for (Order_Items item:order.getOrderItems()){
                 item.getProductId().setInventory((int)(item.getProductId().getInventory()+item.getQuantity()));
                  productRepository.save(item.getProductId());}
+                }
+                ordersRepository.save(order);
+            }
         }
-        ordersRepository.save(order);
-    }
-}
