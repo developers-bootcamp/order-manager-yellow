@@ -2,8 +2,8 @@ package com.yellow.ordermanageryellow.controller;
 
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
 import com.yellow.ordermanageryellow.exceptions.ObjectAlreadyExistException;
-import com.yellow.ordermanageryellow.service.ProductCategoryService;
 import com.yellow.ordermanageryellow.model.ProductCategory;
+import com.yellow.ordermanageryellow.service.ProductCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class ProductCategoryController {
             categories = productCategoryService.findAll();
             return new ResponseEntity<>(categories, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

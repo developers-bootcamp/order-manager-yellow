@@ -10,18 +10,15 @@ import org.springframework.data.mongodb.core.annotation.Collation;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serializable;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Document(collection = "Users")
-public class Users implements Serializable {
-    public Users(String id) {
-        this.id = id;
-    }
-    @Id
+public class Users{
+
+@Id
 private String id;
 private String fullName;
 private String password;
@@ -31,4 +28,7 @@ private Roles roleId;
 @DBRef
 private Company companyId;
 private AuditData AuditData;
+public Users(String id) {
+        this.id = id;
+    }
 }

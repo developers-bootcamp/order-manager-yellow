@@ -13,17 +13,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-@CrossOrigin(origins = "http://localhost:3000")
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
+
 @RequestMapping("/order")
-public class OrderController {
+public class  OrderController {
     private final OrdersService orderservice;
 
     @Autowired
     public OrderController(OrdersService orderservice) {
         this.orderservice = orderservice;
     }
+
     @GetMapping("/{id}")
     public ResponseEntity getOrderById( @PathVariable String id) {
         try {
@@ -33,16 +35,17 @@ public class OrderController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
-    @GetMapping("/{userId}/{status}/{pageNumber}")
-    public ResponseEntity getOrders(@RequestHeader("Authorization") String token, @PathVariable String userId, @PathVariable String status, @PathVariable int pageNumber) {
+    @GetMapping("/{orderStatusId}/{pageNumber}")
+    public ResponseEntity getOrders(@RequestHeader("Authorization") String token,  @PathVariable List <String> orderStatusId, @PathVariable int pageNumber) {
         try {
-            List<Orders> orders = orderservice.getOrders(token, userId, status, pageNumber);
+            System.out.print("CON");
+            List<Orders> orders = orderservice.getOrders(token, orderStatusId, pageNumber);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
+
 
     @PostMapping
     public ResponseEntity insert(@RequestBody Orders newOrder) {
