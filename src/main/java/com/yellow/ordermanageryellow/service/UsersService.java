@@ -190,6 +190,7 @@ public class UsersService {
         }
         Company company = new Company();
         company.setName(companyName);
+        company.setCurrency(currency);
         companyRepository.save(company);
         AuditData auditData1 = new AuditData();
         auditData1.setCreateDate(LocalDateTime.now());

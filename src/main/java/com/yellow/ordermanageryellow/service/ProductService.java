@@ -43,6 +43,9 @@ public class ProductService {
         Company companyOfUser=new Company();
         companyOfUser.setId(company);
         product.setCompanyId(companyOfUser);
+        ProductCategory productCategory = new ProductCategory();
+        productCategory.setId("a81067e3-6c97-589f-a990-6e6b61d09865");
+        product.setProductCategoryId(productCategory);
         product.setAuditData(new AuditData(LocalDateTime.now()));
         return this.productRepository.save(product);
     }
@@ -87,8 +90,9 @@ public class ProductService {
         this.productRepository.deleteById(id);
     }
 
-    public List<ProductDTO> getAllProducts() {
-        List<Product> products = productRepository.findAll().stream().toList();
+    public List<ProductDTO> getAllProducts(String token) {
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<Product> products = productRepository.findByCompanyIdId(company);
         if (products == null)
             throw new NoSuchElementException("no content");
         List<ProductDTO> productDTOs = ProductMapper.INSTANCE.productToDto(products);

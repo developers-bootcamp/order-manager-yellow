@@ -19,8 +19,11 @@ public interface ProductMapper {
     @Mapping(source = "productCategoryId", target = "productCategoryId.id")
     public Product dtoToProduct(ProductDTO productDTO);
 
+    @Mapping(source = "companyId.currency", target = "currency")
     @Mapping(source = "productCategoryId.name", target = "productCategoryId")
     public ProductDTO productToDto(Product product);
+
+
 
     public List<ProductDTO> productToDto(List<Product> list);
 
