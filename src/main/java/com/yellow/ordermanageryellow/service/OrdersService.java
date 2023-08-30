@@ -93,7 +93,7 @@ public class OrdersService {
         if (order.isEmpty()) {
             throw new NoSuchElementException();
         }
-        if (order.get().getOrderStatusId() != status.New || order.get().getOrderStatusId() != status.packing) {
+        if (order.get().getOrderStatusId() != status.New && order.get().getOrderStatusId() != status.packing) {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
         if(order.get().getOrderStatusId() == status.approved)
