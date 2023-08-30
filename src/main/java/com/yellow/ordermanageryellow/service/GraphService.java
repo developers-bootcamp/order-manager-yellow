@@ -4,6 +4,8 @@ import com.yellow.ordermanageryellow.Dao.OrdersRepository;
 import com.yellow.ordermanageryellow.Dto.TopEmploeeyDTO;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Users;
+import com.yellow.ordermanageryellow.security.EncryptedData;
+import com.yellow.ordermanageryellow.security.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -13,6 +15,9 @@ import org.springframework.stereotype.Service;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import java.util.Arrays;
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
 
 import java.time.LocalDateTime;
@@ -40,6 +45,8 @@ public class GraphService {
     private OrdersRepository orderRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private JwtToken jwtToken;
     public List<TopEmploeeyDTO> topEmployee() {
         Aggregation aggregation = newAggregation(
                 match(Criteria.where("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
@@ -59,11 +66,11 @@ public class GraphService {
 
     }
 
-    public AggregateIterable<Document> aggregationTopSoldProduct() {
+    public AggregateIterable<Document> aggregationTopSoldProduct(String token) {
         LocalDate currentDate = LocalDate.now();
         LocalDate beginningOfCurrentMonth = currentDate.withDayOfMonth(1);
         LocalDate threeMonthsAgo = beginningOfCurrentMonth.minusMonths(3);
-
+        String company = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String startDate = threeMonthsAgo.format(formatter);
         String endDate = beginningOfCurrentMonth.format(formatter);
@@ -73,7 +80,9 @@ public class GraphService {
                         new Document("auditData.createDate",
                                 new Document("$gte", javaStartDate)
                                         .append("$lt", javaEndDate))
-                                .append("orderStatusId", "delivered")),
+                                .append("orderStatusId", "delivered")
+                                .append("companyId.$id",
+                                        new ObjectId(company))),
                 new Document("$unwind",
                         new Document("path", "$orderItems")),
                 new Document("$group",
@@ -110,9 +119,9 @@ public class GraphService {
     }
 
     @SneakyThrows
-    public List<TopProductDTO> topSoldProduct() {
+    public List<TopProductDTO> topSoldProduct(String token) {
 
-        AggregateIterable<Document> result = aggregationTopSoldProduct();
+        AggregateIterable<Document> result = aggregationTopSoldProduct(token);
         List<TopProductDTO> topProductsList = new ArrayList<>();
         for (Document document : result) {
             System.out.println(result);
@@ -139,11 +148,13 @@ public class GraphService {
         return topProductsList;
 
     }
-    public Map<Month,Map<Integer,Integer>> getStatus(Integer monthAmount) {
+    public Map<Month,Map<Integer,Integer>> getStatus(Integer monthAmount,String token) {
+        String company = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         LocalDate currentDate = LocalDate.now();
         LocalDate MonthsAgo = currentDate.minusMonths(monthAmount);
         Aggregation aggregation = newAggregation(
-                match(Criteria.where("auditData.createDate").gte(MonthsAgo)),
+                match(Criteria.where("companyId.$id").is(new ObjectId(company))
+                        .and("auditData.createDate").gte(MonthsAgo)),
                 project()
                         .andExpression("month(auditData.createDate)").as("month")
                         .and("orderStatusId").as("orderStatusId"),
