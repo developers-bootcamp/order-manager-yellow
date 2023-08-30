@@ -24,9 +24,10 @@ public class GraphController {
     private GraphService graphService;
 
     @GetMapping("/topEmploeey")
-    public List<TopEmploeeyDTO> topEmploeey() {
-        return graphService.topEmployee();
+    public List<TopEmploeeyDTO> topEmploeey(@RequestHeader("Authorization") String token) {
+        return graphService.topEmployee(token);
     }
+
     @GetMapping("/topProduct")
     public ResponseEntity topProduct(@RequestHeader("Authorization") String token) {
         try {
@@ -38,10 +39,11 @@ public class GraphController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @GetMapping("/statusOrder")
-    public ResponseEntity getStatus(@RequestParam Integer monthAmount,@RequestHeader("Authorization") String token) {
+    public ResponseEntity getStatus(@RequestParam Integer monthAmount, @RequestHeader("Authorization") String token) {
         try {
-            Map<Month, Map<Integer, Integer>> ordersMap = graphService.getStatus(monthAmount,token);
+            Map<Month, Map<Integer, Integer>> ordersMap = graphService.getStatus(monthAmount, token);
             return ResponseEntity.ok().body(ordersMap);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
