@@ -72,11 +72,13 @@ public class ProductService {
         AuditData ForUpdatedProduct = productOptional.getAuditData();
         ForUpdatedProduct.setUpdateDate(LocalDateTime.now());
         product.setAuditData(ForUpdatedProduct);
+//        ProductCategory p = new ProductCategory();
+//        p.setId(product.getProductCategoryId().getId());
+//        product.setProductCategoryId(p);
         product.setCompanyId(productOptional.getCompanyId());
         return productRepository.save(product);
     }
     public void deleteProduct(String id, String token) {
-
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Product ProductFromDb = this.productRepository.findById(id).orElse(null);

@@ -16,11 +16,9 @@ public interface ProductMapper {
 
     ProductMapper INSTANCE = Mappers.getMapper(ProductMapper.class);
 
-    @Mapping(source = "productCategoryId", target = "productCategoryId.id")
     public Product dtoToProduct(ProductDTO productDTO);
 
     @Mapping(source = "companyId.currency", target = "currency")
-    @Mapping(source = "productCategoryId.name", target = "productCategoryId")
     public ProductDTO productToDto(Product product);
 
 
