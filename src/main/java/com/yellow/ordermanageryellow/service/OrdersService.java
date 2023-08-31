@@ -93,7 +93,7 @@ public class OrdersService {
         if (order.isEmpty()) {
             throw new NoSuchElementException();
         }
-        if (order.get().getOrderStatusId() != status.New || order.get().getOrderStatusId() != status.packing) {
+        if (order.get().getOrderStatusId() != status.New && order.get().getOrderStatusId() != status.packing) {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
         if(order.get().getOrderStatusId() == status.approved)
@@ -108,6 +108,7 @@ public class OrdersService {
         String currencyOfCompany="DOLLAR";
          if(order.getOrderItems()!=null)
         currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
+
 
         for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
             Order_Items orderItem = order.getOrderItems().get(i);

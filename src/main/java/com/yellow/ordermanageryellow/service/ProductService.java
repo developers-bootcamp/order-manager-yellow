@@ -94,6 +94,7 @@ public class ProductService {
         List<ProductDTO> productDTOs = ProductMapper.INSTANCE.productToDto(products);
         return productDTOs;
     }
+
     public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         List<Product> products = productRepository.findByCompanyId(company);
@@ -101,5 +102,6 @@ public class ProductService {
             throw new NoSuchElementException("no content");
         return products;
     }
+
 }
 

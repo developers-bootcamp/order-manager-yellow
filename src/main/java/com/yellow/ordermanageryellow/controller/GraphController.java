@@ -24,13 +24,14 @@ public class GraphController {
     private GraphService graphService;
 
     @GetMapping("/topEmploeey")
-    public List<TopEmploeeyDTO> topEmploeey() {
-        return graphService.topEmployee();
+    public List<TopEmploeeyDTO> topEmploeey(@RequestHeader("Authorization") String token) {
+        return graphService.topEmployee(token);
     }
+
     @GetMapping("/topProduct")
-    public ResponseEntity topProduct() {
+    public ResponseEntity topProduct(@RequestHeader("Authorization") String token) {
         try {
-            List<TopProductDTO> topProducts = graphService.topSoldProduct();
+            List<TopProductDTO> topProducts = graphService.topSoldProduct(token);
             return ResponseEntity.status(HttpStatus.OK).body(topProducts);
         } catch (NoDataException e) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());
@@ -38,10 +39,11 @@ public class GraphController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @GetMapping("/statusOrder")
-    public ResponseEntity getStatus(@RequestParam Integer monthAmount) {
+    public ResponseEntity getStatus(@RequestParam Integer monthAmount, @RequestHeader("Authorization") String token) {
         try {
-            Map<Month, Map<Integer, Integer>> ordersMap = graphService.getStatus(monthAmount);
+            Map<Month, Map<Integer, Integer>> ordersMap = graphService.getStatus(monthAmount, token);
             return ResponseEntity.ok().body(ordersMap);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
