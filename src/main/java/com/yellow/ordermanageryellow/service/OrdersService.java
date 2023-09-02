@@ -105,12 +105,11 @@ public class OrdersService {
         HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
         double total = 0;
         String currencyOfOrder = order.getCurrency().toString();
+        String currencyOfCompany="DOLLAR";
+         if(order.getOrderItems()!=null)
+        currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
 
-         String currencyOfCompany="DOLLAR";
-        // if(order.getOrderItems()!=null)
-             //currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
 
-        System.out.println("currencyOfOrder"+currencyOfCompany);
         for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
             Order_Items orderItem = order.getOrderItems().get(i);
             Optional<Product> p = productRepository.findById(orderItem.getProductId().getId());
