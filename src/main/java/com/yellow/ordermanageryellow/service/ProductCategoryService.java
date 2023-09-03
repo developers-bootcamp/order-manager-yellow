@@ -34,8 +34,12 @@ public class ProductCategoryService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<ProductCategory> findAll() {
-        return this.productCategoryRepository.findAll();
+    public List<ProductCategory> findAll(String token) {
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<ProductCategory> categories = productCategoryRepository.findByCompanyIdId(company);
+        if (categories == null)
+            throw new NoSuchElementException("no content");
+        return categories;
     }
 
     public ProductCategory insert(ProductCategory newCategory, String token) throws ObjectAlreadyExistException {

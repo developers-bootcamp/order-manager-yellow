@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface ProductCategoryRepository extends MongoRepository<ProductCategory, String> {
     boolean existsByname(String name);
+    List<ProductCategory> findByCompanyIdId(String id);
+
 }

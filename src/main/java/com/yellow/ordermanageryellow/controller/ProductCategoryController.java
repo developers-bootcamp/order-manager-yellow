@@ -25,10 +25,10 @@ public class ProductCategoryController {
     }
 
     @GetMapping
-    public ResponseEntity getAllCategories() {
+    public ResponseEntity getAllCategories(@RequestHeader("Authorization") String token) {
         List<ProductCategory> categories;
         try {
-            categories = productCategoryService.findAll();
+            categories = productCategoryService.findAll(token);
             return new ResponseEntity<>(categories, HttpStatus.OK);
         } catch (Exception ex) {
             return new ResponseEntity(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
