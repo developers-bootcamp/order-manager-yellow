@@ -43,9 +43,6 @@ public class ProductService {
         Company companyOfUser=new Company();
         companyOfUser.setId(company);
         product.setCompanyId(companyOfUser);
-        ProductCategory productCategory = new ProductCategory();
-        productCategory.setId("a81067e3-6c97-589f-a990-6e6b61d09865");
-        product.setProductCategoryId(productCategory);
         product.setAuditData(new AuditData(LocalDateTime.now()));
         return this.productRepository.save(product);
     }
@@ -72,9 +69,6 @@ public class ProductService {
         AuditData ForUpdatedProduct = productOptional.getAuditData();
         ForUpdatedProduct.setUpdateDate(LocalDateTime.now());
         product.setAuditData(ForUpdatedProduct);
-//        ProductCategory p = new ProductCategory();
-//        p.setId(product.getProductCategoryId().getId());
-//        product.setProductCategoryId(p);
         product.setCompanyId(productOptional.getCompanyId());
         return productRepository.save(product);
     }
