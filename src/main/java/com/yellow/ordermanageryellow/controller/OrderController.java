@@ -13,9 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-@CrossOrigin(origins = "http://localhost:3000")
-
 @RestController
+@CrossOrigin("http://localhost:3000")
 @RequestMapping("/order")
 public class OrderController {
     private final OrdersService orderservice;
@@ -27,6 +26,8 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity getOrderById( @PathVariable String id) {
         try {
+             System.out.print("getOrderById");
+
             Orders order = orderservice.getOrderById(id);
             return ResponseEntity.ok(order);
         } catch (Exception e) {
@@ -34,10 +35,13 @@ public class OrderController {
         }
     }
 
-    @GetMapping("/{userId}/{status}/{pageNumber}")
-    public ResponseEntity getOrders(@RequestHeader("Authorization") String token, @PathVariable String userId, @PathVariable String status, @PathVariable int pageNumber) {
+    @GetMapping("/{orderStatusId}/{pageNumber}")
+    //missing: company id!!!!
+    public ResponseEntity getOrders(@RequestHeader("Authorization") String token,  @PathVariable List <String> orderStatusId, @PathVariable int pageNumber) {
         try {
-            List<Orders> orders = orderservice.getOrders(token, userId, status, pageNumber);
+           System.out.print("CON");
+
+            List<Orders> orders = orderservice.getOrders(token, orderStatusId, pageNumber);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

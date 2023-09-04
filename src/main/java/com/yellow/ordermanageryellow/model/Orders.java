@@ -31,7 +31,8 @@ public class Orders {
     private double totalAmount;
     private List<Order_Items> orderItems;
     private status orderStatusId;
-    private Company companyId;
+    @DBRef
+    private Company company;
     private long creditCardNumber;
     private LocalDate expiryOn;
     private String cvc;
