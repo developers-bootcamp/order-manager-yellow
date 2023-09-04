@@ -27,13 +27,12 @@ public class GraphService {
 
 
     public List<TopEmploeeyDTO> topEmployee() {
-
         Aggregation aggregation = newAggregation(
-                match(Criteria.where("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
-                match(Criteria.where("Statusorder").is(Orders.status.approved)),
-                group("employee").count().as("countOfDeliveredOrders"),
-                project("countOfDeliveredOrders").and("id").as("employee"),
-                sort(Sort.Direction.DESC, "countOfDeliveredOrders"),
+             match(Criteria.where("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
+                match(Criteria.where("orderStatusId").is(Orders.status.approved)),
+                group("employee._id").count().as("countOfDeliveredOrders"),
+                project("countOfDeliveredOrders").and("_id").as("employee"),
+               sort(Sort.Direction.DESC, "countOfDeliveredOrders"),
                 limit(5)
         );
 
@@ -42,6 +41,9 @@ public class GraphService {
         );
 
         List<TopEmploeeyDTO> topEmployees = result.getMappedResults();
+        System.out.print(topEmployees);
+        System.out.print(topEmployees);
+
 
 
         return topEmployees;
