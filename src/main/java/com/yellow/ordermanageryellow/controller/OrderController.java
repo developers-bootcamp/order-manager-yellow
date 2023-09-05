@@ -1,7 +1,9 @@
 package com.yellow.ordermanageryellow.controller;
 
+import com.yellow.ordermanageryellow.model.Filter;
 import com.yellow.ordermanageryellow.service.OrdersService;
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,15 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import com.yellow.ordermanageryellow.model.Orders;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
-@RestController
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 @CrossOrigin(origins = "http://localhost:3000")
-
 @RequestMapping("/order")
+@RestController
+
 public class OrderController {
     private final OrdersService orderservice;
 
@@ -27,10 +28,17 @@ public class OrderController {
     }
 
 
-    @GetMapping("/{pageNumber}")
-    public ResponseEntity getOrders(@RequestHeader("Authorization") String token,@PathVariable boolean isCanceled, @PathVariable int pageNumber, @PathVariable String sortBy,Map<String,Object>filters) {
+
+    @GetMapping("/order-test")
+    public ResponseEntity getOrderTest() {
+        return ResponseEntity.ok("");
+    }
+
+        @GetMapping("/")
+        public ResponseEntity getOrders(@PathParam("isCancelled") boolean isCanceled, @PathParam("pageNumber") int pageNumber, @RequestBody ArrayList<Filter> filter ) {
         try {
-            List<Orders> orders = orderservice.getOrders(token, isCanceled, pageNumber,sortBy,filters);
+
+            List<Orders> orders = orderservice.getOrders("token", isCanceled, pageNumber,new ArrayList<>());
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());

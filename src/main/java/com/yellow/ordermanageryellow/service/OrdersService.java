@@ -8,11 +8,8 @@ import com.yellow.ordermanageryellow.Dao.OrdersRepository;
 import com.yellow.ordermanageryellow.Dao.ProductRepository;
 
 import com.yellow.ordermanageryellow.exceptions.NotValidStatusExeption;
-import com.yellow.ordermanageryellow.model.Discount;
-import com.yellow.ordermanageryellow.model.Order_Items;
-import com.yellow.ordermanageryellow.model.Orders;
+import com.yellow.ordermanageryellow.model.*;
 import com.yellow.ordermanageryellow.model.Orders.status;
-import com.yellow.ordermanageryellow.model.Product;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,7 +41,6 @@ public class OrdersService {
     private ProductRepository productRepository;
     @Autowired
     private ChargingService chargingService=new ChargingService();
-
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -54,15 +50,15 @@ public class OrdersService {
         return ordersRepository.findById(id).get();
     }
 
-    public List<Orders> getOrders(String token,  boolean isCanceled, int pageNumber,  String sortBy,Map<String,Object>filters) {
+    public List<Orders> getOrders(String token,  boolean isCanceled, int pageNumber, List<Filter> filters ) {
         String companyId = jwtToken.decryptToken(token,EncryptedData.COMPANY);
         Pageable paging;
-        if (sortBy != "") {
-            Sort sort = Sort.by(sortBy).ascending();
-            paging = PageRequest.of(pageNumber, pageSize, sort);
-        } else {
-            paging = PageRequest.of(pageNumber, pageSize);
-        }
+//        if (sortBy != "") {
+//            Sort sort = Sort.by(sortBy).ascending();
+//            paging = PageRequest.of(pageNumber, pageSize, sort);
+//        } else {
+//            paging = PageRequest.of(pageNumber, pageSize);
+//        }
         Criteria criteria = Criteria.where("companyId.id").is(companyId);
         if(isCanceled){
             criteria.and("orderStatusId").is("cancelled");
@@ -70,11 +66,11 @@ public class OrdersService {
         else{
             criteria.and("orderStatusId").in("approved","charging","packing","New");
         }
-        filters.forEach((key, val) -> {
-            criteria.and(key).is(val);
+        filters.forEach((object) -> {
+            criteria.and(object.getFieldName()).is(object.getFilterValue());
         });
         Query query = new Query(criteria);
-        query.with(paging);
+       // query.with(paging);
         return mongoTemplate.find(query, Orders.class);
     }
 
