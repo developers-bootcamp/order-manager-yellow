@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface OrdersRepository extends MongoRepository<Orders, String> {
     public List<Orders> findByOrderStatusIdInAndCompanyId(Pageable pageNumber, List <String> orderStatusId,String companyId  );
-
+    List<Orders> findByNotificationFlag(boolean notificationFlag);
 
 }
