@@ -53,6 +53,15 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+    
+    @GetMapping("/{pageNumber}")
+    public ResponseEntity getAllProductPaginationt(@PathVariable int pageNumber,@RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(productService.getProductsPaginatin(pageNumber,token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 //    @RequestMapping("/byCompany")
 //    @GetMapping
 //    public ResponseEntity getAllProductByCompany( @RequestHeader("Authorization") String token) {

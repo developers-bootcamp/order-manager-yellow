@@ -17,12 +17,10 @@ import java.util.NoSuchElementException;
 @RequestMapping("/categories")
 public class ProductCategoryController {
 
-    private final ProductCategoryService productCategoryService;
-
     @Autowired
-    public ProductCategoryController(ProductCategoryService productCategoryService) {
-        this.productCategoryService = productCategoryService;
-    }
+    private ProductCategoryService productCategoryService;
+
+
 
     @GetMapping
     public ResponseEntity getAllCategories(@RequestHeader("Authorization") String token) {
@@ -83,5 +81,14 @@ public class ProductCategoryController {
     @RequestMapping("/createToken")
     public String createToken() {
         return productCategoryService.fill();
+    }
+
+    @GetMapping("/{pageNumber}")
+    public ResponseEntity getAllcategoriesPaginationt(@PathVariable int pageNumber,@RequestHeader("Authorization") String token) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(productCategoryService.getCategoriesPagination(pageNumber,token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }
