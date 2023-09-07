@@ -118,7 +118,7 @@ public class ProductService {
 
     public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
-        List<Product> products = productRepository.findByCompanyId(company);
+        List<Product> products = productRepository.findByCompanyIdId(company);
         if (products == null)
             throw new NoSuchElementException("no content");
         return products;

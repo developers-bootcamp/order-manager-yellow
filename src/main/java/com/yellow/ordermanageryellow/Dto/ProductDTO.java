@@ -13,16 +13,14 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class ProductDTO {
     private String id;
     private String name;
     private String desc;
     private double price;
-    private ProductCategory productCategoryId;
+    private String productCategoryId;
     private int inventory;
     private Discount discount;
     private int discountAmount;
-    private Currency currency;
-
-
 }
