@@ -13,7 +13,7 @@ import com.yellow.ordermanageryellow.security.EncryptedData;
 import com.yellow.ordermanageryellow.security.JwtToken;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -99,29 +99,19 @@ public class ProductService {
         List<ProductDTO> productDTOs = ProductMapper.INSTANCE.productToDto(products);
         return productDTOs;
     }
+    public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<Product> products = productRepository.findByCompanyId(company);
+        if (products == null)
+            throw new NoSuchElementException("no content");
+        return products;
+    }
     @SneakyThrows
     public List<Product> getProductsPaginatin(int pageNumber, String token) {
         Pageable pageable = PageRequest.of(pageNumber, 3);
         String companyId = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Page<Product> Products = productRepository.findByCompanyIdId(companyId, pageable);
         return Products.getContent();
-    }
-//    public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
-//        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
-//        List<Product> products = productRepository.findAllByCompanyId(companyId);
-//        List<Users> users = UserRepository.findAllByCompanyId(companyId);
-//
-//        if (products == null)
-//            throw new NoSuchElementException("no content");
-//        return products;
-//    }
-
-    public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
-        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
-        List<Product> products = productRepository.findByCompanyIdId(company);
-        if (products == null)
-            throw new NoSuchElementException("no content");
-        return products;
     }
 
 }
