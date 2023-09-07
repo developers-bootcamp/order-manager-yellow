@@ -1,6 +1,7 @@
 package com.yellow.ordermanageryellow.Dto;
 
 import com.yellow.ordermanageryellow.model.Company;
+import com.yellow.ordermanageryellow.model.Currency;
 import com.yellow.ordermanageryellow.model.Discount;
 import com.yellow.ordermanageryellow.model.ProductCategory;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 public class ProductDTO {
     private String id;
     private String name;
@@ -21,6 +23,4 @@ public class ProductDTO {
     private int inventory;
     private Discount discount;
     private int discountAmount;
-
-
 }

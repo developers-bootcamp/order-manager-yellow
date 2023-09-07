@@ -3,6 +3,7 @@ package com.yellow.ordermanageryellow.service;
 import com.yellow.ordermanageryellow.Dao.ProductRepository;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
 import com.yellow.ordermanageryellow.Dto.ProductNameDTO;
+import com.yellow.ordermanageryellow.Dto.UserDTO;
 import com.yellow.ordermanageryellow.Exception.ObjectAllReadyExists;
 import com.yellow.ordermanageryellow.Dao.RolesRepository;
 import com.yellow.ordermanageryellow.exceptions.NoPermissionException;
@@ -12,6 +13,7 @@ import com.yellow.ordermanageryellow.security.EncryptedData;
 import com.yellow.ordermanageryellow.security.JwtToken;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -76,7 +78,6 @@ public class ProductService {
         return productRepository.save(product);
     }
     public void deleteProduct(String id, String token) {
-
         String role= this.jwtToken.decryptToken(token, EncryptedData.ROLE);
         String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Product ProductFromDb = this.productRepository.findById(id).orElse(null);
@@ -90,8 +91,9 @@ public class ProductService {
         this.productRepository.deleteById(id);
     }
 
-    public List<ProductDTO> getAllProducts() {
-        List<Product> products = productRepository.findAll().stream().toList();
+    public List<ProductDTO> getAllProducts(String token) {
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<Product> products = productRepository.findByCompanyIdId(company);
         if (products == null)
             throw new NoSuchElementException("no content");
         List<ProductDTO> productDTOs = ProductMapper.INSTANCE.productToDto(products);
@@ -111,5 +113,6 @@ public class ProductService {
         Page<Product> Products = productRepository.findByCompanyIdId(companyId, pageable);
         return Products.getContent();
     }
+
 }
 

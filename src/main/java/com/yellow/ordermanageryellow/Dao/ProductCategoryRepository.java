@@ -13,4 +13,8 @@ public interface ProductCategoryRepository extends MongoRepository<ProductCatego
     boolean existsByname(String name);
     List<ProductCategory> findByCompanyIdId(String companyId);
     Page<ProductCategory> findByCompanyIdId(String companyId, Pageable pageable);
+
+}
+
+
 }

@@ -26,7 +26,8 @@ public class GraphController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 
         }
-    }
+
+
     @GetMapping("/topProduct")
     public ResponseEntity topProduct(@RequestHeader("Authorization") String token) {
         try {
@@ -38,6 +39,7 @@ public class GraphController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @GetMapping("/statusOrder")
     public ResponseEntity getStatus(@RequestParam Integer monthAmount, @RequestHeader("Authorization") String token) {
         try {
