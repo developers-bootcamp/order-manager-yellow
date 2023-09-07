@@ -115,5 +115,14 @@ public class ProductService {
 //            throw new NoSuchElementException("no content");
 //        return products;
 //    }
+
+    public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<Product> products = productRepository.findByCompanyId(company);
+        if (products == null)
+            throw new NoSuchElementException("no content");
+        return products;
+    }
+
 }
 
