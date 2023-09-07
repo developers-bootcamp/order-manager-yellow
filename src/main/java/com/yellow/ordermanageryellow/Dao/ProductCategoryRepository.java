@@ -16,5 +16,3 @@ public interface ProductCategoryRepository extends MongoRepository<ProductCatego
 
 }
 
-
-}
