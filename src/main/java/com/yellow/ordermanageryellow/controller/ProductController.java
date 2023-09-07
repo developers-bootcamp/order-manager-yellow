@@ -33,9 +33,7 @@ public class ProductController {
         }catch (ObjectAllReadyExists e){
             return  ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
-
     }
-
     @GetMapping("/names/{prefix}")
     public ResponseEntity getAllNamesProducts(@PathVariable("prefix") String prefix, @RequestHeader("Authorization") String token) {
         try {
