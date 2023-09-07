@@ -21,8 +21,6 @@ public interface ProductMapper {
 //    @Mapping(source = "companyId.currency", target = "currency")
 //    public ProductDTO productToDto(Product product);
 
-
-
     public List<ProductDTO> productToDto(List<Product> list);
 
     public List<Product> dtoToProduct(List<ProductDTO> list);
