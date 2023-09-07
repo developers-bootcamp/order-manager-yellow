@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 @CrossOrigin(origins = "http://localhost:3000")
 
 @RequestMapping("/order")
-public class OrderController {
+public class  OrderController {
     private final OrdersService orderservice;
 
     @Autowired
@@ -26,7 +26,15 @@ public class OrderController {
         this.orderservice = orderservice;
     }
 
-
+    @GetMapping("/{id}")
+    public ResponseEntity getOrderById( @PathVariable String id) {
+        try {
+            Orders order = orderservice.getOrderById(id);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+    }
     @GetMapping("/{orderStatusId}/{pageNumber}")
     public ResponseEntity getOrders(@RequestHeader("Authorization") String token,  @PathVariable List <String> orderStatusId, @PathVariable int pageNumber) {
         try {

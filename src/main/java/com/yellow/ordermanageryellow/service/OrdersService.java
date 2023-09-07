@@ -1,5 +1,9 @@
 package com.yellow.ordermanageryellow.service;
 
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
+import com.yellow.ordermanageryellow.Dto.OrderDTO;
+import com.yellow.ordermanageryellow.Dto.OrderMapper;
+import com.yellow.ordermanageryellow.Dao.CompanyRepository;
 import com.yellow.ordermanageryellow.Dto.OrderDTO;
 import com.yellow.ordermanageryellow.Dto.OrderMapper;
 import com.yellow.ordermanageryellow.Dto.ProductDTO;
@@ -33,7 +37,10 @@ import java.util.*;
 public class OrdersService {
     @Autowired
     private OrdersRepository ordersRepository;
-
+    @Autowired
+    private ConvertService convertService;
+    @Autowired
+    private CompanyRepository companyRepository;
     @Autowired
     private JwtToken jwtToken;
     @Autowired
@@ -68,15 +75,15 @@ public class OrdersService {
         return null;
     }
 
-       public String insert(Orders newOrder) {
-            if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
-                throw new NotValidStatusExeption("Order should be in status new or approve");
-            }
-            Orders order = ordersRepository.insert(newOrder);
-         if(newOrder.getOrderStatusId() == status.approved)
-            chargingService.chargingStep(order);
-            return order.getId();
+    public String insert(Orders newOrder) {
+        if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.approved) {
+            throw new NotValidStatusExeption("Order should be in status new or approve");
         }
+        Orders order = ordersRepository.insert(newOrder);
+        if(newOrder.getOrderStatusId() == status.approved)
+            chargingService.chargingStep(order);
+        return order.getId();
+    }
 
     public boolean edit(Orders currencyOrder) {
         if (currencyOrder.getOrderStatusId() != status.cancelled && currencyOrder.getOrderStatusId() != status.approved) {
@@ -86,20 +93,31 @@ public class OrdersService {
         if (order.isEmpty()) {
             throw new NoSuchElementException();
         }
-        if (order.get().getOrderStatusId() != status.New || order.get().getOrderStatusId() != status.packing) {
+        if (order.get().getOrderStatusId() != status.New && order.get().getOrderStatusId() != status.packing) {
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
         if(order.get().getOrderStatusId() == status.approved)
             chargingService.chargingStep(order.get());
-       ordersRepository.save(currencyOrder);
+        ordersRepository.save(currencyOrder);
         return true;
     }
-    public Map<String, HashMap<Double, Integer>> calculateOrderService( @RequestParam  Orders order) {
+    public Map<String, HashMap<Double, Integer>> calculateOrderService(@RequestParam Orders order) {
         HashMap<String, HashMap<Double, Integer>> calculatedOrder = new HashMap<String, HashMap<Double, Integer>>();
         double total = 0;
+        String currencyOfOrder = order.getCurrency().toString();
+        String currencyOfCompany="DOLLAR";
+         if(order.getOrderItems()!=null)
+        currencyOfCompany=companyRepository.findById(order.getOrderItems().get(0).getProductId().getCompanyId().getId()).get().getCurrency().toString();
+
+
         for (int i = 0; i < order.getOrderItems().stream().count(); i++) {
             Order_Items orderItem = order.getOrderItems().get(i);
             Optional<Product> p = productRepository.findById(orderItem.getProductId().getId());
+            double rate;
+            if(currencyOfCompany.equals(currencyOfOrder))
+                rate=1;
+            else
+                rate = convertService.convertCurrency(currencyOfCompany, currencyOfOrder);
             HashMap<Double, Integer> o = new HashMap<Double, Integer>();
             double sum = 0;
             if (p.get().getDiscount() == Discount.FixedAmount) {
@@ -111,13 +129,16 @@ public class OrdersService {
                 sum = (p.get().getPrice() * p.get().getDiscountAmount()) / 100 * (100 - p.get().getDiscountAmount()) * order.getOrderItems().get(i).getQuantity();
                 o.put(sum, p.get().getDiscountAmount());
             }
-            calculatedOrder.put(p.get().getId(), o);
+            calculatedOrder.put(p.get().getName(), o);
             total += sum;
         }
         HashMap<Double, Integer> o = new HashMap<Double, Integer>();
         o.put(total, -1);
         calculatedOrder.put("-1", o);
         return calculatedOrder;
+    }
+    public List<Orders> getOrdersWithNotificationFlag() {
+        return ordersRepository.findByNotificationFlag(true);
     }
 
 

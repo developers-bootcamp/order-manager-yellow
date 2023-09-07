@@ -13,6 +13,8 @@ import com.yellow.ordermanageryellow.security.JwtToken;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestHeader;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -43,7 +45,6 @@ public class ProductService {
         product.setCompanyId(companyOfUser);
         product.setAuditData(new AuditData(LocalDateTime.now()));
         return this.productRepository.save(product);
-
     }
 
     public List<ProductNameDTO> getAllProductsNames(String token, String prefix) {
@@ -61,11 +62,14 @@ public class ProductService {
             throw new NoSuchElementException("product doesn't exist");
         String companyOfProduct = productOptional.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfProduct))
+        if(!wholeRole.getName().equals(RoleName.ADMIN)|| ! company.equals(companyOfProduct))
             throw new NoPermissionException("You do not have permission to update product");
         if (!productOptional.getName().equals(product.getName()) && productRepository.existsByName(product.getName()))
             throw new ObjectAllReadyExists("You need a unique name for product");
-        product.getAuditData().setUpdateDate(LocalDateTime.now());
+        AuditData ForUpdatedProduct = productOptional.getAuditData();
+        ForUpdatedProduct.setUpdateDate(LocalDateTime.now());
+        product.setAuditData(ForUpdatedProduct);
+        product.setCompanyId(productOptional.getCompanyId());
         return productRepository.save(product);
     }
     public void deleteProduct(String id, String token) {
@@ -76,10 +80,9 @@ public class ProductService {
         if (ProductFromDb == null) {
             throw new NoSuchElementException("category is not found");
         }
-        String companyOfCategory = "7";
-        //ProductFromDb.getCompanyId().getId();
+        String companyOfProduct = ProductFromDb.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory))
+        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfProduct))
             throw new NoPermissionException("You do not have permission to delete product category");
         this.productRepository.deleteById(id);
     }
@@ -90,6 +93,14 @@ public class ProductService {
             throw new NoSuchElementException("no content");
         List<ProductDTO> productDTOs = ProductMapper.INSTANCE.productToDto(products);
         return productDTOs;
+    }
+
+    public List<Product> getAllProductByCompany(@RequestHeader("Authorization") String token) {
+        String company= this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
+        List<Product> products = productRepository.findByCompanyId(company);
+        if (products == null)
+            throw new NoSuchElementException("no content");
+        return products;
     }
 
 }

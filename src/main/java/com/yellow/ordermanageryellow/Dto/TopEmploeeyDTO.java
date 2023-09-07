@@ -2,19 +2,17 @@ package com.yellow.ordermanageryellow.Dto;
 
 
 import com.yellow.ordermanageryellow.model.Users;
+import lombok.*;
 
 import java.io.Serializable;
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class TopEmploeeyDTO implements Serializable {
 
-    //private Users employee;
-    private Long countOfDeliveredOrders;
+    private Users employee;
+    private int countOfDeliveredOrders;
 
-//    public void setEmployee(Users employee) {
-//        this.employee = employee;
-//    }
-
-    public void setCountOfDeliveredOrders(Long countOfDeliveredOrders) {
-        this.countOfDeliveredOrders = countOfDeliveredOrders;
-    }
 }

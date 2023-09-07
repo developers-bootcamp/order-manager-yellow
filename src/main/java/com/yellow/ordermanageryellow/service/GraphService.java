@@ -1,9 +1,12 @@
 
 package com.yellow.ordermanageryellow.service;
+
 import com.yellow.ordermanageryellow.Dao.OrdersRepository;
 import com.yellow.ordermanageryellow.Dto.TopEmploeeyDTO;
 import com.yellow.ordermanageryellow.model.Orders;
 import com.yellow.ordermanageryellow.model.Users;
+import com.yellow.ordermanageryellow.security.EncryptedData;
+import com.yellow.ordermanageryellow.security.JwtToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -14,10 +17,16 @@ import org.springframework.stereotype.Service;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
+import java.util.Arrays;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+
 import com.mongodb.client.AggregateIterable;
 import com.yellow.ordermanageryellow.Dto.ProductAmountDto;
 import com.yellow.ordermanageryellow.Dto.TopProductDTO;
@@ -34,36 +43,40 @@ import java.util.*;
 import org.springframework.stereotype.Service;
 
 import org.bson.Document;
+
 @Service
 public class GraphService {
     @Autowired
     private OrdersRepository orderRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
-    public List<TopEmploeeyDTO> topEmployee() {
+    @Autowired
+    private JwtToken jwtToken;
+
+    public List<TopEmploeeyDTO> topEmployee(String token) {
+        String company = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         Aggregation aggregation = newAggregation(
-                match(Criteria.where("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
+                match(Criteria.where("companyId.$id").is(new ObjectId(company)).
+                        and("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
                 match(Criteria.where("orderStatusId").is(Orders.status.approved)),
-                group("employee._id").count().as("countOfDeliveredOrders"),
+                group("employee").count().as("countOfDeliveredOrders"),
                 project("countOfDeliveredOrders").and("_id").as("employee"),
                 sort(Sort.Direction.DESC, "countOfDeliveredOrders"),
                 limit(5)
         );
         AggregationResults<TopEmploeeyDTO> result = mongoTemplate.aggregate(
-                aggregation, "Order", TopEmploeeyDTO.class
+                aggregation, Orders.class, TopEmploeeyDTO.class
         );
         List<TopEmploeeyDTO> topEmployees = result.getMappedResults();
-        System.out.print(topEmployees);
-        System.out.print(topEmployees);
         return topEmployees;
 
     }
 
-    public AggregateIterable<Document> aggregationTopSoldProduct() {
+    public AggregateIterable<Document> aggregationTopSoldProduct(String token) {
         LocalDate currentDate = LocalDate.now();
         LocalDate beginningOfCurrentMonth = currentDate.withDayOfMonth(1);
         LocalDate threeMonthsAgo = beginningOfCurrentMonth.minusMonths(3);
-
+        String company = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String startDate = threeMonthsAgo.format(formatter);
         String endDate = beginningOfCurrentMonth.format(formatter);
@@ -73,7 +86,9 @@ public class GraphService {
                         new Document("auditData.createDate",
                                 new Document("$gte", javaStartDate)
                                         .append("$lt", javaEndDate))
-                                .append("orderStatusId", "delivered")),
+                                .append("orderStatusId", "delivered")
+                                .append("companyId.$id",
+                                        new ObjectId(company))),
                 new Document("$unwind",
                         new Document("path", "$orderItems")),
                 new Document("$group",
@@ -110,11 +125,12 @@ public class GraphService {
     }
 
     @SneakyThrows
-    public List<TopProductDTO> topSoldProduct() {
+    public List<TopProductDTO> topSoldProduct(String token) {
 
-        AggregateIterable<Document> result = aggregationTopSoldProduct();
+        AggregateIterable<Document> result = aggregationTopSoldProduct(token);
         List<TopProductDTO> topProductsList = new ArrayList<>();
         for (Document document : result) {
+            System.out.println(result);
             int monthInt = document.getInteger("month");
             Month monthEnum = Month.of(monthInt);
             TopProductDTO TopProductDTO = new TopProductDTO();
@@ -138,11 +154,14 @@ public class GraphService {
         return topProductsList;
 
     }
-    public Map<Month,Map<Integer,Integer>> getStatus(Integer monthAmount) {
+
+    public Map<Month, Map<Integer, Integer>> getStatus(Integer monthAmount, String token) {
+        String company = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
         LocalDate currentDate = LocalDate.now();
         LocalDate MonthsAgo = currentDate.minusMonths(monthAmount);
         Aggregation aggregation = newAggregation(
-                match(Criteria.where("auditData.createDate").gte(MonthsAgo)),
+                match(Criteria.where("companyId.$id").is(new ObjectId(company))
+                        .and("auditData.createDate").gte(MonthsAgo)),
                 project()
                         .andExpression("month(auditData.createDate)").as("month")
                         .and("orderStatusId").as("orderStatusId"),
@@ -155,8 +174,8 @@ public class GraphService {
         );
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "Orders", Document.class);
         List<Document> mappedResults = results.getMappedResults();
-        System.out.println("mappedResults"+mappedResults);
-        Map<Month,Map<Integer,Integer>> resultMap = new HashMap<>();
+        System.out.println("mappedResults" + mappedResults);
+        Map<Month, Map<Integer, Integer>> resultMap = new HashMap<>();
         for (Document mappedResult : mappedResults) {
             Month month = Month.of(mappedResult.getInteger("month"));
             int cancelled = mappedResult.getInteger("cancelled", 0);
@@ -164,7 +183,7 @@ public class GraphService {
 
             Map<Integer, Integer> tempMap = new HashMap<>();
             tempMap.put(cancelled, delivered);
-            resultMap.put(month,tempMap);
+            resultMap.put(month, tempMap);
 
         }
         return resultMap;
