@@ -18,8 +18,8 @@ public interface ProductMapper {
 
     public Product dtoToProduct(ProductDTO productDTO);
 
-    @Mapping(source = "companyId.currency", target = "currency")
-    public ProductDTO productToDto(Product product);
+//    @Mapping(source = "companyId.currency", target = "currency")
+//    public ProductDTO productToDto(Product product);
 
 
 
