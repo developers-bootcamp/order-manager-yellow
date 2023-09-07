@@ -225,7 +225,10 @@ public class UsersService {
             throw new ObjectAlreadyExistException("this user allready exists");
         }
         user.setPassword(hashedPassword);
-
+        AuditData auditData = new AuditData();
+        auditData.setCreateDate(LocalDateTime.now());
+        auditData.setUpdateDate(LocalDateTime.now());
+        user.setAuditData(auditData);
 
         user.setAddress(address);
 
