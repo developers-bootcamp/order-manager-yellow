@@ -3,7 +3,9 @@ package com.yellow.ordermanageryellow.Dao;
 import com.yellow.ordermanageryellow.model.Product;
 import com.yellow.ordermanageryellow.model.Users;
 
+
 import io.lettuce.core.dynamic.annotation.Param;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -22,7 +24,5 @@ public interface ProductRepository extends MongoRepository<Product, String> {
     List<Product> findByCompanyId(String company);
     List<Product> findByCompanyIdId(String id);
     Page<Product> findByCompanyIdId(String id, Pageable pageable);
-
-
 
 }

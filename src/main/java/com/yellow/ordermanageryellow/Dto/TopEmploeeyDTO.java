@@ -6,6 +6,10 @@ import lombok.*;
 
 import java.io.Serializable;
 
+import com.yellow.ordermanageryellow.model.Users;
+import lombok.*;
+import java.io.Serializable;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,8 +18,5 @@ import java.io.Serializable;
 public class TopEmploeeyDTO implements Serializable {
     private Users employee;
     private int countOfDeliveredOrders;
-
-
-    
 
 }
