@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.List;
 import java.time.LocalDateTime;
@@ -54,7 +55,8 @@ public class UsersService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private  CompanyRepository companyRepository;
+    private CompanyRepository companyRepository;
+
     public UsersService() {
         this.bCryptPasswordEncoder = new BCryptPasswordEncoder();
     }
@@ -65,7 +67,7 @@ public class UsersService {
         if (user == null)
             throw new NotFoundException("user not exist");
         if (bCryptPasswordEncoder.matches(password,user.getPassword())) {
-              Map<String, Object> result = new HashMap<>();
+            Map<String, Object> result = new HashMap<>();
             result.put("token", this.jwtToken.generateToken(user));
             result.put("role", user.getRoleId().getName());
             return result;
@@ -73,6 +75,7 @@ public class UsersService {
             throw new WrongPasswordException("invalid password");
         }
     }
+
     @SneakyThrows
     public Users createNewUser(UserDTO newUser, String token) {
         Users user = createUser(newUser);
@@ -104,7 +107,7 @@ public class UsersService {
         }
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if(!wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
+        if (!wholeRole.getName().equals(RoleName.ADMIN) || !company.equals(companyOfCategory)) {
             throw new NoPermissionException("You do not have permission to update user");
         }
         UserRepository.deleteById(id);
@@ -124,7 +127,7 @@ public class UsersService {
         user.setCompanyId(userFromDB.getCompanyId());
         String companyOfCategory = userFromDB.getCompanyId().getId();
         Roles wholeRole = rolesRepository.findById(role).orElse(null);
-        if( !wholeRole.getName().equals(RoleName.ADMIN)|| !company.equals(companyOfCategory)){
+        if (!wholeRole.getName().equals(RoleName.ADMIN) || !company.equals(companyOfCategory)) {
             throw new NoPermissionException("You do not have permission to update user");
         }
         return UserRepository.save(user);
@@ -168,12 +171,12 @@ public class UsersService {
 
         Users user = new Users();
         user.setFullName(fullName);
-        if(password.equals(" ")){
+        if (password.equals(" ")) {
             throw new NotValidStatusExeption("password not valid");
         }
         String hashedPassword = bCryptPasswordEncoder.encode(password);
         user.setPassword(hashedPassword);
-        if(!email.contains("@")){
+        if (!email.contains("@")) {
             throw new NotValidStatusExeption("email not valid");
         }
         if (userRepository.existsByAddressEmail(email)) {
@@ -192,6 +195,7 @@ public class UsersService {
         }
         Company company = new Company();
         company.setName(companyName);
+        company.setCurrency(currency);
         companyRepository.save(company);
         AuditData auditData1 = new AuditData();
         auditData1.setCreateDate(LocalDateTime.now());
@@ -206,16 +210,30 @@ public class UsersService {
         return result;
     }
 
+    @SneakyThrows
+
     public Users createUser(UserDTO u) {
+
         Address address = new Address();
         address.setAddress(u.getAddress());
-        address.setEmail(u.getEmail());
         address.setTelephone(u.getTelephone());
-
+        address.setEmail(u.getEmail());
         Users user = new Users();
         user.setId(u.getId());
         user.setFullName(u.getFullName());
-        user.setPassword(u.getPassword());
+        if (u.getPassword().equals(" ")) {
+            throw new NotValidStatusExeption("password not valid");
+        }
+        String hashedPassword = bCryptPasswordEncoder.encode(u.getPassword());
+        if (userRepository.existsByAddressEmail(u.getEmail())) {
+            throw new ObjectAlreadyExistException("this user allready exists");
+        }
+        user.setPassword(hashedPassword);
+        AuditData auditData = new AuditData();
+        auditData.setCreateDate(LocalDateTime.now());
+        auditData.setUpdateDate(LocalDateTime.now());
+        user.setAuditData(auditData);
+
         user.setAddress(address);
 
         Roles userRole = rolesRepository.getByName(RoleName.valueOf(u.getRole()));
