@@ -22,12 +22,10 @@ public class ChargingService {
     public void chargingStep(Orders order) {
         Orders orderFromMongo = ordersRepository.findById(order.getId()).orElse(null);
         try {
-            orderFromMongo.setOrderStatusId(Orders.status.charging);
-            orderFromMongo.setNotificationFlag(true);
+            orderFromMongo.setOrderStatusId(Orders.status.Charging);
             for (Order_Items item : orderFromMongo.getOrderItems()) {
                 if (item.getProductId().getInventory() < item.getQuantity()) {
-                    orderFromMongo.setOrderStatusId(Orders.status.cancelled);
-                    orderFromMongo.setNotificationFlag(true);
+                    orderFromMongo.setOrderStatusId(Orders.status.Cancelled);
                     ordersRepository.save(orderFromMongo);
                     return;
                 } else {
@@ -44,13 +42,10 @@ public class ChargingService {
     }
     public void CompletedPayment(@NotNull OrderDTO orderDTO) {
         Orders order=ordersRepository.findById(orderDTO.getOrderId()).orElse(null);
-        if(orderDTO.getOrderStatusId()==Orders.status.charging) {
-            order.setOrderStatusId(Orders.status.packing);
-            order.setNotificationFlag(true);
-        }
+        if(orderDTO.getOrderStatusId()==Orders.status.Charging)
+            order.setOrderStatusId(Orders.status.Packing);
         else {
-            order.setOrderStatusId(Orders.status.cancelled);
-            order.setNotificationFlag(true);
+            order.setOrderStatusId(Orders.status.Cancelled);
             for (Order_Items item:order.getOrderItems()){
                 item.getProductId().setInventory((int)(item.getProductId().getInventory()+item.getQuantity()));
                  productRepository.save(item.getProductId());}

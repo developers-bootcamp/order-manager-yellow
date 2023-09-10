@@ -29,11 +29,13 @@ public class ProductController {
     }catch (TokenExpiredException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }catch (NoPermissionException e){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }catch (ObjectAllReadyExists e){
             return  ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
+
     }
+
     @GetMapping("/names/{prefix}")
     public ResponseEntity getAllNamesProducts(@PathVariable("prefix") String prefix, @RequestHeader("Authorization") String token) {
         try {
@@ -44,13 +46,14 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity getAllProduct(@RequestHeader("Authorization") String token) {
+    public ResponseEntity getAllProduct() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts(token));
+            return ResponseEntity.status(HttpStatus.OK).body(productService.getAllProducts());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @RequestMapping("/byCompany")
     @GetMapping
     public ResponseEntity getAllProductByCompany( @RequestHeader("Authorization") String token) {
@@ -60,6 +63,7 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
     @PutMapping
     public ResponseEntity editProduct(@RequestBody Product product,@RequestHeader("Authorization") String token) {
         try {
@@ -70,7 +74,8 @@ public class ProductController {
         } catch (ObjectAllReadyExists e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }catch (NoPermissionException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }

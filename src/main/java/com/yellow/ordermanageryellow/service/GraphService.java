@@ -45,7 +45,7 @@ public class GraphService {
         Aggregation aggregation = newAggregation(
                 match(Criteria.where("company.$id").is(new ObjectId(company)).
                         and("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
-                match(Criteria.where("orderStatusId").is(Orders.status.approved)),
+                match(Criteria.where("orderStatusId").is(Orders.status.Approved)),
                 group("employee").count().as("countOfDeliveredOrders"),
                 project("countOfDeliveredOrders").and("_id").as("employee"),
                 sort(Sort.Direction.DESC, "countOfDeliveredOrders"),
@@ -71,7 +71,7 @@ public class GraphService {
                         new Document("auditData.createDate",
                                 new Document("$gte", javaStartDate)
                                         .append("$lt", javaEndDate))
-                                .append("orderStatusId", "delivered")
+                                .append("orderStatusId", "Delivered")
                                 .append("company.$id",
                                         new ObjectId(company))),
                 new Document("$unwind",
@@ -122,8 +122,8 @@ public class GraphService {
             List<ProductAmountDto> ListProductAmountDto = new ArrayList<>();
             for (Document product : products) {
                 String productName = product.getString("product");
-                //Double totalQuantity = product.getDouble("totalQuantity");
-                Integer totalQuantity = product.getInteger("totalQuantity");
+                Double totalQuantity = product.getDouble("totalQuantity");
+               // Integer totalQuantity = product.getInteger("totalQuantity");
                 ProductAmountDto productAmountDto = new ProductAmountDto();
                 productAmountDto.setProductName(productName);
                 productAmountDto.setAmount(totalQuantity);
@@ -147,11 +147,11 @@ public class GraphService {
                         .andExpression("month(auditData.createDate)").as("month")
                         .and("orderStatusId").as("orderStatusId"),
                 group("month")
-                        .sum(ConditionalOperators.when(ComparisonOperators.valueOf("orderStatusId").equalToValue("cancelled")).then(1).otherwise(0)).as("cancelled").sum(ConditionalOperators.when(ComparisonOperators.valueOf("orderStatusId").equalToValue("delivered")).then(1).otherwise(0)).as("delivered"),
+                        .sum(ConditionalOperators.when(ComparisonOperators.valueOf("orderStatusId").equalToValue("Cancelled")).then(1).otherwise(0)).as("Cancelled").sum(ConditionalOperators.when(ComparisonOperators.valueOf("orderStatusId").equalToValue("Approved")).then(1).otherwise(0)).as("Approved"),
                 project()
                         .and("_id").as("month")
-                        .and("cancelled").as("cancelled")
-                        .and("delivered").as("delivered")
+                        .and("Cancelled").as("Cancelled")
+                        .and("Approved").as("Approved")
         );
         AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, "Orders", Document.class);
         List<Document> mappedResults = results.getMappedResults();
@@ -159,10 +159,10 @@ public class GraphService {
         Map<Month, Map<Integer, Integer>> resultMap = new HashMap<>();
         for (Document mappedResult : mappedResults) {
             Month month = Month.of(mappedResult.getInteger("month"));
-            int cancelled = mappedResult.getInteger("cancelled", 0);
-            int delivered = mappedResult.getInteger("delivered", 0);
+            int Cancelled = mappedResult.getInteger("Cancelled", 0);
+            int Delivered = mappedResult.getInteger("Approved", 0);
             Map<Integer, Integer> tempMap = new HashMap<>();
-            tempMap.put(cancelled, delivered);
+            tempMap.put(Cancelled, Delivered);
             resultMap.put(month, tempMap);
         }
         return resultMap;
