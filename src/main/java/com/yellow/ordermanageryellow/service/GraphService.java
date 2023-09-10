@@ -46,6 +46,7 @@ public class GraphService {
                 match(Criteria.where("company.$id").is(new ObjectId(company)).
                         and("auditData.createDate").gte(LocalDateTime.now().minusMonths(3))),
                 match(Criteria.where("orderStatusId").is(Orders.status.Approved)),
+
                 group("employee").count().as("countOfDeliveredOrders"),
                 project("countOfDeliveredOrders").and("_id").as("employee"),
                 sort(Sort.Direction.DESC, "countOfDeliveredOrders"),
@@ -72,6 +73,7 @@ public class GraphService {
                                 new Document("$gte", javaStartDate)
                                         .append("$lt", javaEndDate))
                                 .append("orderStatusId", "Delivered")
+
                                 .append("company.$id",
                                         new ObjectId(company))),
                 new Document("$unwind",
@@ -163,6 +165,7 @@ public class GraphService {
             int Delivered = mappedResult.getInteger("Delivered", 0);
             Map<Integer, Integer> tempMap = new HashMap<>();
             tempMap.put(Cancelled, Delivered);
+
             resultMap.put(month, tempMap);
         }
         return resultMap;

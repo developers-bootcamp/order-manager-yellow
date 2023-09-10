@@ -75,6 +75,7 @@ public class OrdersService {
 
     public String insert(Orders newOrder,String token) {
         if (newOrder.getOrderStatusId() != status.New && newOrder.getOrderStatusId() != status.Approved) {
+
             throw new NotValidStatusExeption("Order should be in status new or approve");
         }
         String companyId = this.jwtToken.decryptToken(token, EncryptedData.COMPANY);
@@ -85,6 +86,7 @@ public class OrdersService {
         newOrder.setAuditData(auditData);
         Orders order = ordersRepository.insert(newOrder);
         if (newOrder.getOrderStatusId() == status.Approved)
+
             chargingService.chargingStep(order);
         return order.getId();
     }
@@ -98,6 +100,7 @@ public class OrdersService {
             throw new NoSuchElementException();
         }
         if (order.get().getOrderStatusId() != status.New && order.get().getOrderStatusId() != status.Packing) {
+
             throw new NotValidStatusExeption("It is not possible to change an order that is not in status new or packaging");
         }
         if(order.get().getOrderStatusId() == status.Approved)

@@ -14,3 +14,8 @@ public interface ProductCategoryRepository extends MongoRepository<ProductCatego
     List<ProductCategory> findByCompanyIdId(String companyId);
     Page<ProductCategory> findByCompanyIdId(String companyId, Pageable pageable);
 }
+
+
+
+
+
